@@ -1,0 +1,25 @@
+== How to run
+
+=== Requirements
+
+* Ruby interpreter (tested on <TODO!>).
+
+=== Running
+
+<TODO!>
+
+== Credits
+
+* Yutaka Hara <yhara AT netlab.jp>
+* Narihiro Nakamura <narihiro AT netlab.jp>
+* Akihiro Sada <sada AT netlab.jp>
+* Kouji Takao <kouji AT netlab.jp>
+* Tor Bechmann Yamamoto-Sorensen <tor AT netlab.jp>
+* Kumojima Kenta <kumojima AT netlab.jp>
+* Yuya Nishida <yuya AT netlab.jp>
+
+# Editor settings
+# - Emacs -
+# local variables:
+# mode: RD
+# end:

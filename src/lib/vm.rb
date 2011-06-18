@@ -79,6 +79,7 @@ class VM
   # an error if n is not an integer.
   def self.dbl(n)
     raise NativeError, "#{n} is not fixnum." unless n.is_a?(Fixnum)
+    raise LogicError, "n > 65535: n=<#{n}>" if n > 65535
     if n < 32768
       n = n * 2
     else

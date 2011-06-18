@@ -39,6 +39,27 @@ class VMTest < Test::Unit::TestCase
     end
   end
 
+  # 現状は無限ループになるためコメントアウト。
+  # apply_cntのチェックが入れば問題なくなる。
+  # def test_loop_dec2
+  #   VM.simulate(PlayField.new) do |vm|
+  #     vm.run(:right, :get, 0)
+  #     vm.run(:left, :S, 0)
+  #     vm.run(:right, :dec, 1)
+  #     vm.run(:left, :S, 1)
+  #     vm.run(:right, :I, 1)
+  #     vm.run(:left, :K, 0)
+  #     vm.run(:left, :S, 0)
+  #     vm.run(:right, :get, 0)
+  #     vm.run(:left, :K, 0)
+  #     vm.run(:left, :S, 0)
+  #     vm.run(:right, :succ, 0)
+  #     vm.run(:right, :zero, 0)
+  #     vm.run(:right, :zero, 0)
+  #     assert_equal 9833, vm.oslot(255).vitality
+  #   end
+  # end
+
   def test_s_k_s_help_zero
     VM.simulate(PlayField.new) do |vm|
       vm.pslot(1).field = 10

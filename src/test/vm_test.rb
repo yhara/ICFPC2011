@@ -8,8 +8,8 @@ class VMTest < Test::Unit::TestCase
     VM.simulate(PlayField.new) do |vm|
       vm.run(:right, :inc, 0)
       vm.run(:right, :zero, 0)
-      assert_equal [:I], VM.oslot(0).field
-      assert_equal 10001, VM.oslot(0).vitality
+      assert_equal [:I], VM.pslot(0).field
+      assert_equal 10001, VM.pslot(0).vitality
     end
   end
 
@@ -34,14 +34,14 @@ class VMTest < Test::Unit::TestCase
       vm.run(:left, :S, 0)
       vm.run(:right, :succ, 0)
       vm.run(:right, :zero, 0)
-      assert_equal [:I], vm.oslot(0).field
-      assert_equal 16, vm.oslot(1).field
+      assert_equal [:I], vm.pslot(0).field
+      assert_equal 16, vm.pslot(1).field
     end
   end
 
   def test_s_k_s_help_zero
     VM.simulate(PlayField.new) do |vm|
-      vm.oslot(1).field = 10
+      vm.pslot(1).field = 10
       func = [:S3, [:K2, [:S3, [:K2, [:help3, 0, 1]], [:get]]], [:succ]]
       assert_equal [:I], vm.evaluate(func, 0)
     end
@@ -93,13 +93,13 @@ class VMTest < Test::Unit::TestCase
 
   def test_s_get
     VM.simulate(PlayField.new) do |vm|
-      vm.oslot(0).field = 0
+      vm.pslot(0).field = 0
       assert_equal 0, vm.get(0)
       assert_equal [:I], vm.get(255)
       assert_raise(IndexNativeError) do
         vm.get(256)
       end
-      vm.oslot(0).vitality = 0
+      vm.pslot(0).vitality = 0
       assert_raise(NativeError) do
         vm.get(0)
       end

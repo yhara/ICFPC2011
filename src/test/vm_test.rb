@@ -39,6 +39,27 @@ class VMTest < Test::Unit::TestCase
     end
   end
 
+  # 現状は無限ループになるためコメントアウト。
+  # apply_cntのチェックが入れば問題なくなる。
+  # def test_loop_dec2
+  #   VM.simulate(PlayField.new) do |vm|
+  #     vm.run(:right, :get, 0)
+  #     vm.run(:left, :S, 0)
+  #     vm.run(:right, :dec, 1)
+  #     vm.run(:left, :S, 1)
+  #     vm.run(:right, :I, 1)
+  #     vm.run(:left, :K, 0)
+  #     vm.run(:left, :S, 0)
+  #     vm.run(:right, :get, 0)
+  #     vm.run(:left, :K, 0)
+  #     vm.run(:left, :S, 0)
+  #     vm.run(:right, :succ, 0)
+  #     vm.run(:right, :zero, 0)
+  #     vm.run(:right, :zero, 0)
+  #     assert_equal 9833, vm.oslot(255).vitality
+  #   end
+  # end
+
   def test_s_k_s_help_zero
     VM.simulate(PlayField.new) do |vm|
       vm.pslot(1).field = 10
@@ -150,5 +171,107 @@ class VMTest < Test::Unit::TestCase
       vm.zombie2(0, [:K, [:help, [:zero]]])
       assert_equal([:K, [:help, [:zero]]], vm.copy(255))
     end
+  end
+
+  def test_revive
+    VM.simulate(PlayField.new) do |vm|
+      255.times do |i|
+        vm.pslot(i).vitality = 0
+        vm.revive(i)
+        assert_equal(1, vm.pslot(i).vitality)
+      end
+      [-1, 256, 32767, 32768, 65535].each do |i|
+        assert_raise(IndexNativeError) { vm.revive(i) }
+      end
+    end
+  end
+
+  def test_s_inc
+    VM.simulate(PlayField.new) do |vm|
+      assert_equal([:I], vm.pslot(0).field)
+      assert_equal(10000, vm.pslot(0).vitality)
+      initial_and_expects = [
+                             [-1, -1],
+                             [0, 0],
+                             [1, 2],
+                             [10000, 10001],
+                             [65534, 65535],
+                             [65535, 65535]
+                            ]
+      initial_and_expects.each do |initial, expect|
+        vm.pslot(0).vitality = initial
+        vm.run(:right, :inc, 0)
+        vm.run(:right, :zero, 0)
+        assert_equal([:I], vm.pslot(0).field)
+        assert_equal(expect, vm.pslot(0).vitality)
+      end
+    end
+  end
+
+  def test_s_inc__not_fixnum
+    VM.simulate(PlayField.new) do |vm|
+      assert_raise(NativeError) do
+        vm.inc([:I])
+      end
+    end
+  end
+
+  def test_s_inc__invalid_slot_number
+    VM.simulate(PlayField.new) do |vm|
+      [-1, 256].each do |i|
+        assert_raise(IndexNativeError) do
+          vm.inc(i)
+        end
+      end
+    end
+  end
+
+  def test_s_dec
+    VM.simulate(PlayField.new) do |vm|
+      assert_equal([:I], vm.oslot(255).field)
+      assert_equal(10000, vm.oslot(255).vitality)
+      initial_and_expects = [
+                             [-1, -1],
+                             [0, 0],
+                             [1, 0],
+                             [10000, 9999],
+                             [65535, 65534]
+                            ]
+      initial_and_expects.each do |initial, expect|
+        vm.oslot(255).vitality = initial
+        vm.run(:right, :dec, 0)
+        vm.run(:right, :zero, 0)
+        assert_equal([:I], vm.oslot(255).field)
+        assert_equal(expect, vm.oslot(255).vitality)
+      end
+    end
+  end
+
+  def test_s_dec__not_fixnum
+    VM.simulate(PlayField.new) do |vm|
+      assert_raise(NativeError) do
+        vm.dec([:I])
+      end
+    end
+  end
+
+  def test_s_dec__invalid_slot_number
+    VM.simulate(PlayField.new) do |vm|
+      [-1, 256].each do |i|
+        assert_raise(IndexNativeError) do
+          vm.dec(i)
+        end
+      end
+    end
+  end
+
+  def test_zombies_b
+    play_field = PlayField.new(:myself)
+    play_field.proponent.slots[0].vitality = -1
+    play_field.proponent.slots[0].field = [:S3, [:K2, [:dec]], [:K2, 0]]
+    VM.zombies!(play_field)
+    assert_equal(0, play_field.proponent.slots[0].vitality)
+    assert_equal([:I], play_field.proponent.slots[0].field)
+    assert_equal(10001, play_field.opponent.slots[255 - 0].vitality)
   end
 end

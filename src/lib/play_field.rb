@@ -2,13 +2,16 @@
 require "player"
 
 class PlayField
-  def initialize(first_player=:myself)
+  def initialize(first_player_name = :myself)
     @myself = Player.new(:myself)
     @enemy = Player.new(:enemy)
+    @players = {}
+    @players[@myself.name] = @myself
+    @players[@enemy.name] = @enemy
+    @first_player_name = first_player_name
     @turn = 0
-    @opponent = @myself
-    @proponent = @enemy
-    @first_player = first_player
+    @proponent = @players[@first_player_name]
+    @opponent = @players[@first_player_name == :myself ? :enemy : :myself]
     @apply_cnt = 0
   end
 
@@ -34,14 +37,14 @@ class PlayField
   def swap_players
     @apply_cnt = 0
     if my_turn?
-      @opponent = @enemy
-      @proponent = @myself
-    else
-      @opponent = @myself
       @proponent = @enemy
+      @opponent = @myself
+    else
+      @proponent = @myself
+      @opponent = @enemy
     end
+    @turn += 1 if @proponent.name == @first_player_name
     zombies!
-    change_turn if @opponent.name == @first_player
   end
 
   # ソンビが動く！！
@@ -50,13 +53,10 @@ class PlayField
   end
 
   def my_turn?
-    @opponent.name == :myself
+    @proponent.name == :myself
   end
 
   private
-  def change_turn
-    @turn+=1
-  end
 
   def deepclone
     return Marshal.load(Marshal.dump(self))

@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
+require "errors"
+
 class Slots < Array
-  # 配列の範囲を外れた場合はIndexErrorを発生させる
+  # i番目のスロットを取得する。iは0から255。
+  # 範囲外のスロットへのアクセス時にルールとしてエラーを発生させる。
   def [](i)
-    raise IndexError, "index #{i} outside of array" if i < 0
-    return self.fetch(i)
+    raise IndexNativeError, "index #{i} outside of slots" if i < 0 || i >= length
+    return fetch(i)
   end
 end

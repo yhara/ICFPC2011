@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # 問題解決用
 class Solver
-  def self.solve()
+  def solve
+    [:left, :I, 0]
   end
 end

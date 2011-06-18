@@ -79,6 +79,7 @@ class VM
   # an error if n is not an integer.
   def self.dbl(n)
     raise NativeError, "#{n} is not fixnum." unless n.is_a?(Fixnum)
+    raise LogicError, "n > 65535: n=<#{n}>" if n > 65535
     if n < 32768
       n = n * 2
     else
@@ -134,10 +135,10 @@ class VM
   # argument y and return x. [Remark: The first function is called the
   # K combinator and written λx.λy.x in lambda-calculus.]
   def self.K(x)
-    [:K1, x]
+    [:K2, x]
   end
 
-  def self.K1(x, y)
+  def self.K2(x, y)
     x
   end
 

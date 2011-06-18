@@ -16,4 +16,17 @@ class TestPlayField < Test::Unit::TestCase
     assert_equal [:I], @play_field.opponent.slots[0].field
     assert_equal 0, @dup_playfield.opponent.slots[0].field
   end
+
+  def test_swap_players
+    assert_equal 0, @play_field.turn
+    assert_equal :myself, @play_field.opponent.name
+    assert_equal :enemy, @play_field.proponent.name
+    @play_field.apply_cnt = 2
+    @play_field.swap_players
+    assert_equal :enemy, @play_field.opponent.name
+    assert_equal :myself, @play_field.proponent.name
+    assert_equal 0, @play_field.apply_cnt
+    @play_field.swap_players
+    assert_equal 1, @play_field.turn
+  end
 end

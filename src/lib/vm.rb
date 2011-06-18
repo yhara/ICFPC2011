@@ -16,14 +16,14 @@ class VM
   end
 
   # VMが保持するPlayFieldに対して処理を実行
-  def self.run(lr, card, slot, opts={})
+  def self.run(lr, card, slot_no, opts={})
     card = card.to_sym
     card = card == :zero ? 0 : [card]
     case lr
     when :left
-      oslot(slot).field = evaluate(card, oslot(slot).field)
+      pslot(slot_no).field = evaluate(card, pslot(slot_no).field)
     when :right
-      oslot(slot).field = evaluate(oslot(slot).field, card)
+      pslot(slot_no).field = evaluate(pslot(slot_no).field, card)
     else
       raise "lr value #{lr} is invalid"
     end
@@ -93,8 +93,8 @@ class VM
   # alive. It raises an error if i is not a valid slot number or the
   # slot is dead.
   def self.get(i)
-    raise NativeError, "#{oslot(i)} is dead." if oslot(i).dead?
-    return oslot(i).field
+    raise NativeError, "#{pslot(i)} is dead." if pslot(i).dead?
+    return pslot(i).field
   end
 
   # Card "put" is a function that takes an (unused) argument and
@@ -147,7 +147,7 @@ class VM
   # v<65535, does nothing if v=65535 or v<=0, or raises an error if i
   # is not a valid slot number, and returns the identity function.
   def self.inc(i)
-    oslot(i).vitality+=1
+    pslot(i).vitality += 1
     return [:I]
   end
 
@@ -156,7 +156,7 @@ class VM
   # does nothing if v<=0, or raises an error if i is not a valid slot
   # number, and returns the identity function.
   def self.dec(i)
-    pslot(255-i).vitality-=1
+    oslot(255 - i).vitality -= 1
     return [:I]
   end
 
@@ -180,8 +180,8 @@ class VM
   end
 
   def self.attack3(i, j, n)
-    oslot(i).vitality -= n
-    oslot(255-j).vitality -= n * 0.9
+    pslot(i).vitality -= n
+    oslot(255-j).vitality -= n * 9 / 10
     return :I
   end
 
@@ -206,8 +206,8 @@ class VM
   end
 
   def self.help3(i, j, n)
-    oslot(i).vitality -= n
-    oslot(j).vitality += n * 1.1
+    pslot(i).vitality -= n
+    pslot(j).vitality += n * 11 / 10
     return [:I]
   end
 
@@ -216,7 +216,7 @@ class VM
   # an error if i is not a valid slot number. Note that the slot is
   # ith, not (255-i)th.
   def self.copy(i)
-    return pslot(i).field
+    return oslot(i).field
   end
 
   # Card "revive" is a function that takes an argument i, sets to 1
@@ -224,7 +224,7 @@ class VM
   # nothing if v>0), and returns the identity function. It raises an
   # error if i is not a valid slot number.
   def self.revive(i)
-    oslot(i).vitality = 1 if oslot(i).dead?
+    pslot(i).vitality = 1 if pslot(i).dead?
     return [:I]
   end
 
@@ -239,8 +239,8 @@ class VM
   end
 
   def self.zombie2(i, x)
-    pslot(i).field = x
-    pslot(i).vitality = -1 if oslot(i).vitality == 0
+    oslot(255 - i).field = x
+    oslot(255 - i).vitality = -1 if oslot(255 - i).vitality == 0
     return [:I]
   end
 

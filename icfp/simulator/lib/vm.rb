@@ -3,11 +3,11 @@ require "play_field"
 
 class VM
   def self.setup
-    @@field = PlayField.new
+    @@play_field = PlayField.new
   end
 
-  def self.field
-    @@field
+  def self.play_field
+    @@play_field
   end
 
   def self.run(lr, card, slot, opts={})
@@ -21,7 +21,7 @@ class VM
     else
       raise "lr value #{lr} is invalid"
     end
-    puts @@field.opponent if opts[:dump]
+    puts @@play_field.opponent if opts[:dump]
   end
 
   # value describe:
@@ -29,7 +29,7 @@ class VM
   # integer: 0..65535
   def self.evaluate(value, arg=nil)
     value ||= []
-    @@field.opponent.apply_cnt+=1
+    @@play_field.opponent.apply_cnt+=1
     optimize!(value)
     return nil if value.empty?
     return value[0] if value[0].is_a?(Fixnum)
@@ -47,11 +47,11 @@ class VM
   end
 
   def self.oslot(i)
-    @@field.opponent.slots[i]
+    @@play_field.opponent.slots[i]
   end
 
   def self.pslot(i)
-    @@field.proponent.slots[i]
+    @@play_field.proponent.slots[i]
   end
 
   # Card "I" is the identity function. [Remark: It is called the I

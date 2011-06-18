@@ -151,4 +151,17 @@ class VMTest < Test::Unit::TestCase
       assert_equal([:K, [:help, [:zero]]], vm.copy(255))
     end
   end
+
+  def test_revive
+    VM.simulate(PlayField.new) do |vm|
+      255.times do |i|
+        vm.pslot(i).vitality = 0
+        vm.revive(i)
+        assert_equal(1, vm.pslot(i).vitality)
+      end
+      [-1, 256, 32767, 32768, 65535].each do |i|
+        assert_raise(IndexNativeError) { vm.revive(i) }
+      end
+    end
+  end
 end

@@ -195,11 +195,12 @@ class VMTest < Test::Unit::TestCase
     end
   end
 
-  # 仕様の範囲外
-  def test_s_inc__outside_specs
+  def test_s_inc__invalid_slot_number
     VM.simulate(PlayField.new) do |vm|
-      assert_raise(IndexNativeError) do
-        vm.inc(256)
+      [-1, 256].each do |i|
+        assert_raise(IndexNativeError) do
+          vm.inc(i)
+        end
       end
     end
   end
@@ -233,7 +234,7 @@ class VMTest < Test::Unit::TestCase
     end
   end
 
-  def test_s_inc__invalid_slot_number
+  def test_s_dec__invalid_slot_number
     VM.simulate(PlayField.new) do |vm|
       [-1, 256].each do |i|
         assert_raise(IndexNativeError) do

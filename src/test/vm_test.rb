@@ -70,12 +70,23 @@ class VMTest < Test::Unit::TestCase
     end
   end
 
-  def test_dbl
+  def test_s_dbl
     VM.simulate(PlayField.new) do |vm|
-      assert_equal 65526, vm.dbl(32763)
+      assert_equal 65534, vm.dbl(32767)
       assert_equal 65535, vm.dbl(32768)
       assert_raise(NativeError) do
         vm.dbl([:I])
+      end
+    end
+  end
+
+  # 仕様の範囲外
+  def test_s_dbl__outside_specs
+    VM.simulate(PlayField.new) do |vm|
+      (65536..65600).each do |i|
+      assert_raise(LogicError) do
+          vm.dbl(i)
+        end
       end
     end
   end

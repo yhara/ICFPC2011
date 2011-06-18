@@ -1,0 +1,2 @@
+class NativeError < StandardError
+end

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-require File.expand_path("test_helper", File.dirname(__FILE__))
+require_relative "test_helper"
 require "vm"
 require "play_field"
 
@@ -91,12 +91,12 @@ class VMTest < Test::Unit::TestCase
     end
   end
 
-  def test_get
+  def test_s_get
     VM.simulate(PlayField.new) do |vm|
       vm.oslot(0).field = 0
       assert_equal 0, vm.get(0)
       assert_equal [:I], vm.get(255)
-      assert_raise(IndexError) do
+      assert_raise(IndexNativeError) do
         vm.get(256)
       end
       vm.oslot(0).vitality = 0

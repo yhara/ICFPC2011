@@ -69,6 +69,7 @@ class VM
   # is not an integer.
   def self.succ(n)
     raise NativeError, "#{n} is not fixnum." unless n.is_a?(Fixnum)
+    raise LogicError, "n > 65535: n=<#{n}>" if n > 65535
     return n.succ if n < 65535
     return n
   end

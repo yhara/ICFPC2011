@@ -47,12 +47,25 @@ class VMTest < Test::Unit::TestCase
     end
   end
 
-  def test_succ
+  def test_s_succ
     VM.simulate(PlayField.new) do |vm|
-      assert_equal 65535, vm.succ(65534)
-      assert_equal 65535, vm.succ(65535)
+      (0..65534).each do |i|
+        assert_equal(i + 1, vm.succ(i))
+      end
+      assert_equal(65535, vm.succ(65535))
       assert_raise(NativeError) do
         vm.succ([:I])
+      end
+    end
+  end
+
+  # 仕様の範囲外
+  def test_s_succ__outside_specs
+    VM.simulate(PlayField.new) do |vm|
+      (65536..65600).each do |i|
+        assert_raise(LogicError) do
+          vm.succ(i)
+        end
       end
     end
   end

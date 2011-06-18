@@ -1,3 +1,5 @@
+require "player"
+
 class PlayField
   def initialize(first_player=:myself)
     @myself = Player.new(:myself)

@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+require "errors"
+
 class VM
   # VMが保持するPlayFieldを指定
   def self.setup(play_field)

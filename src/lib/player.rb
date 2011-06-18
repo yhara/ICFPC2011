@@ -1,3 +1,5 @@
+require "world"
+
 class Player
   def initialize(name=:mine)
     @name = name

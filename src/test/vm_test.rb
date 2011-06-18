@@ -1,4 +1,9 @@
-class TestRepository < Test::Unit::TestCase
+# -*- coding: utf-8 -*-
+require File.expand_path("test_helper", File.dirname(__FILE__))
+require "vm"
+require "play_field"
+
+class VMTest < Test::Unit::TestCase
   def test_example1
     VM.simulate(PlayField.new) do |vm|
       vm.run(:right, :inc, 0)

@@ -1,0 +1,49 @@
+# -*- coding: utf-8 -*-
+require "rake"
+require "rdoc/task"
+require "rake/testtask"
+
+Rake::RDocTask.new do |rd|
+  rd.main = "README"
+  rd.rdoc_files.include("README", "{lib/**/*.rb,ext/**/*.c}")
+  rd.options = ["--line-numbers", "--inline-source", "--title", "ICFP2011: Team yarunee",
+                "--main", "README"]
+  rd.rdoc_dir = "docs/rdoc"
+end
+
+Rake::TestTask.new do |t|
+  t.libs << "lib"
+  t.libs << "test"
+  t.test_files = FileList["test/**/*_{helper,test}.rb"]
+end
+
+task :default => :test
+
+# Rakeのバグの回避。以下の修正をしないと常にtraceが表示されてしまう。
+module Rake
+  class Application
+    # Provide standard execption handling for the given block.
+    def standard_exception_handling
+      begin
+        yield
+      rescue SystemExit => ex
+        # Exit silently with current status
+        raise
+      rescue OptionParser::InvalidOption => ex
+        # Exit silently
+        exit(false)
+      rescue Exception => ex
+        # Exit with error message
+        $stderr.puts "#{name} aborted!"
+        $stderr.puts ex.message
+        if options.trace
+          $stderr.puts ex.backtrace.join("\n")
+        else
+          $stderr.puts ""
+          $stderr.puts "(See full trace by running task with --trace)"
+        end
+        exit(false)
+      end
+    end
+  end
+end

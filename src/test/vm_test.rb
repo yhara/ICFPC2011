@@ -140,4 +140,15 @@ class VMTest < Test::Unit::TestCase
       assert_equal 0, vm.play_field.apply_cnt
     end
   end
+
+  def test_copy
+    VM.simulate(PlayField.new) do |vm|
+      assert_equal [:I], vm.copy(0)
+      vm.oslot(0).field = 10
+      assert_equal(10, vm.copy(0))
+      vm.oslot(255).vitality = 0
+      vm.zombie2(0, [:K, [:help, [:zero]]])
+      assert_equal([:K, [:help, [:zero]]], vm.copy(255))
+    end
+  end
 end

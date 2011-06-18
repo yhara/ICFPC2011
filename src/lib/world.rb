@@ -6,6 +6,7 @@ require 'errors'
 require 'solver'
 require 'player'
 require 'slot'
+require 'utils'
 
 # 環境を表現する。
 class World
@@ -30,7 +31,7 @@ class World
   def run(first_player_type)
     $stdout.sync = true
     $stdin.sync = true
-    first_player = first_player_type == "0" ? :mine : :enemy
+    first_player = first_player_type == "0" ? :myself : :enemy
     @play_field = PlayField.new(first_player)
     loop {
       if @play_field.my_turn?

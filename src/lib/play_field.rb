@@ -12,7 +12,9 @@ class PlayField
   attr_accessor :apply_cnt
 
   def run(lr, card, slot, opts={})
-    VM.run(self, lr, card, slot, opts)
+    VM.simulate(self) do |vm|
+      vm.run(lr, card, slot, opts)
+    end
   end
 
   def change_player

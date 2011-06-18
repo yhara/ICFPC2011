@@ -5,7 +5,8 @@ class VM
     self.play_field = play_field
   end
 
-  # VMが保持するPlayFieldに対して処理を実行
+  # 引数に渡したplay_fieldでvmをシュミレート
+  # 使い方はtest_vm.rbを参考にしてください
   def self.simulate(play_field, &block)
     self.play_field = play_field
     block.call(self)

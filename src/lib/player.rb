@@ -10,13 +10,12 @@ class Player
   end
 
   attr_reader :slots, :name
-  attr_accessor :apply_cnt
 
   def to_s
     str = [@name]
     @slots.each_with_index do |s, i|
-      unless s[1] == [:I]
-        str << "#{i}={#{s[0]},#{s[1]}}"
+      unless s.field == [:I]
+        str << "#{i}={#{s.vitality},#{s.field}}"
       end
     end
     return str.join("\n")

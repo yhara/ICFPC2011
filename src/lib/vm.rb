@@ -42,7 +42,9 @@ class VM
   # (2)vitalityが-1のスロットを見つける。
   # (3)[:I]を引数に渡してfieldを実行する。このときエラーが発生してもゾンビの処理は続けること。
   # (4)全てのスロットを見終わったら、ゾンビのvitalityを0、fieldを[:I]にする。
-  def self.zombies!
+  def self.zombies!(play_field)
+    old_play_field = self.play_field
+    self.play_field = play_field
     @@processing_zombies = true
     play_field.proponent.slots.each do |slot|
       if slot.vitality == -1
@@ -56,6 +58,7 @@ class VM
       end
     end
   ensure
+    self.play_field = old_play_field
     @@processing_zombies = false
   end
   

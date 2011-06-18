@@ -248,11 +248,9 @@ class VMTest < Test::Unit::TestCase
     play_field = PlayField.new(:myself)
     play_field.proponent.slots[0].vitality = -1
     play_field.proponent.slots[0].field = [:S3, [:K2, [:dec]], [:K2, 0]]
-    VM.simulate(play_field) do |vm|
-      vm.zombies!
-      assert_equal(0, play_field.proponent.slots[0].vitality)
-      assert_equal([:I], play_field.proponent.slots[0].field)
-      assert_equal(10001, play_field.opponent.slots[255 - 0].vitality)
-    end
+    VM.zombies!(play_field)
+    assert_equal(0, play_field.proponent.slots[0].vitality)
+    assert_equal([:I], play_field.proponent.slots[0].field)
+    assert_equal(10001, play_field.opponent.slots[255 - 0].vitality)
   end
 end

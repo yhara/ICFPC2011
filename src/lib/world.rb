@@ -42,7 +42,7 @@ class World
       end
       @play_field.run(*answer)
       @play_field.swap_players
-      VM.zombies!
+      VM.zombies!(@play_field)
     }
   end
 

@@ -42,7 +42,7 @@ class VMTest < Test::Unit::TestCase
   def test_s_k_s_help_zero
     VM.simulate(PlayField.new) do |vm|
       vm.oslot(1).field = 10
-      func = [:S3, [:K1, [:S3, [:K1, [:help3, 0, 1]], [:get]]], [:succ]]
+      func = [:S3, [:K2, [:S3, [:K2, [:help3, 0, 1]], [:get]]], [:succ]]
       assert_equal [:I], vm.evaluate(func, 0)
     end
   end

@@ -1,5 +1,3 @@
-require "player"
-
 class PlayField
   def initialize(first_player=:myself)
     @myself = Player.new(:myself)
@@ -12,6 +10,10 @@ class PlayField
 
   attr_reader :myself, :enemy, :trun, :opponent, :proponent
   attr_accessor :apply_cnt
+
+  def run(lr, card, slot, opts={})
+    VM.run(self, lr, card, slot, opts)
+  end
 
   def change_player
   end

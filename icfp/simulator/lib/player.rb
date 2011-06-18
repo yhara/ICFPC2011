@@ -1,11 +1,7 @@
-require "slot"
-
 class Player
-  INITIAL_VITALITY = 10000
-
   def initialize(name=:mine)
     @name = name
-    @slots = (0..255).map{Slot.new}
+    @slots = (0...World::NUM_SLOTS).map{Slot.new}
 
     def @slots.[](i)
       raise IndexError, "index #{i} outside of array" if i < 0

@@ -33,7 +33,7 @@ class PlayField
   # プレイヤー変更
   def swap_players
     @apply_cnt = 0
-    if @opponent.name == :myself
+    if my_turn?
       @opponent = @enemy
       @proponent = @myself
     else
@@ -46,6 +46,10 @@ class PlayField
   # ソンビが動く！！
   def zombies!
     # TODO:
+  end
+
+  def my_turn?
+    @opponent.name == :myself
   end
 
   private

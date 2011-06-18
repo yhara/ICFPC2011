@@ -17,6 +17,7 @@ class World
   attr_reader :play_field
 
   def initialize
+    @solver = Solver.new
     @play_field = PlayField.new
   end
 
@@ -26,7 +27,28 @@ class World
   end
 
   # 実行
-  def run(lr, card, slot)
-    # TODO
+  def run
+    first_player = gets
+    first_player = first_player == "0" ? :mine : :enemy
+    @play_field = PlayField.new(first_player)
+    loop {
+      if @play_field.my_turn?
+        answer = @solver.solve
+        puts answer
+      else
+        answer = get_enemy_answer
+      end
+      @play_field.run(*answer)
+      @play_field.swap_players
+    }
+  end
+
+  private
+  def get_enemy_answer
+    lr = gets
+    lr = lr == "1" ? :left : :right
+    card = gets
+    slot = gets.to_i
+    return [lr, card, slot]
   end
 end

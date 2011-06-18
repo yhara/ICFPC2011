@@ -2,9 +2,6 @@
 require "play_field"
 
 class VM
-  APPLY_CARD_TO_SLOT = "1"
-  APPLY_SLOT_TO_CARD = "2"
-
   def self.setup
     @@field = PlayField.new
   end
@@ -17,9 +14,9 @@ class VM
     card = card.to_sym
     card = card == :zero ? 0 : [card]
     case lr
-    when APPLY_CARD_TO_SLOT
+    when :left
       oslot(slot).field = evaluate(card, oslot(slot).field)
-    when APPLY_SLOT_TO_CARD
+    when :right
       oslot(slot).field = evaluate(oslot(slot).field, card)
     else
       raise "lr value #{lr} is invalid"

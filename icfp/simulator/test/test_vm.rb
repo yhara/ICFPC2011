@@ -4,32 +4,32 @@ class TestRepository < Test::Unit::TestCase
   end
 
   def test_example1
-    VM.run(VM::APPLY_SLOT_TO_CARD, :inc, 0)
-    VM.run(VM::APPLY_SLOT_TO_CARD, :zero, 0)
+    VM.run(:right, :inc, 0)
+    VM.run(:right, :zero, 0)
     assert_equal [:I], VM.oslot(0).field
     assert_equal 10001, VM.oslot(0).vitality
   end
 
   def test_example2
-    VM.run(VM::APPLY_SLOT_TO_CARD, :help, 0)
-    VM.run(VM::APPLY_SLOT_TO_CARD, :zero, 0)
-    VM.run(VM::APPLY_CARD_TO_SLOT, :K, 0)
-    VM.run(VM::APPLY_CARD_TO_SLOT, :S, 0)
-    VM.run(VM::APPLY_SLOT_TO_CARD, :succ, 0)
-    VM.run(VM::APPLY_SLOT_TO_CARD, :zero, 0)
-    VM.run(VM::APPLY_SLOT_TO_CARD, :zero, 1)
-    VM.run(VM::APPLY_CARD_TO_SLOT, :succ, 1)
-    VM.run(VM::APPLY_CARD_TO_SLOT, :dbl, 1)
-    VM.run(VM::APPLY_CARD_TO_SLOT, :dbl, 1)
-    VM.run(VM::APPLY_CARD_TO_SLOT, :dbl, 1)
-    VM.run(VM::APPLY_CARD_TO_SLOT, :dbl, 1)
-    VM.run(VM::APPLY_CARD_TO_SLOT, :K, 0)
-    VM.run(VM::APPLY_CARD_TO_SLOT, :S, 0)
-    VM.run(VM::APPLY_SLOT_TO_CARD, :get, 0)
-    VM.run(VM::APPLY_CARD_TO_SLOT, :K, 0)
-    VM.run(VM::APPLY_CARD_TO_SLOT, :S, 0)
-    VM.run(VM::APPLY_SLOT_TO_CARD, :succ, 0)
-    VM.run(VM::APPLY_SLOT_TO_CARD, :zero, 0)
+    VM.run(:right, :help, 0)
+    VM.run(:right, :zero, 0)
+    VM.run(:left, :K, 0)
+    VM.run(:left, :S, 0)
+    VM.run(:right, :succ, 0)
+    VM.run(:right, :zero, 0)
+    VM.run(:right, :zero, 1)
+    VM.run(:left, :succ, 1)
+    VM.run(:left, :dbl, 1)
+    VM.run(:left, :dbl, 1)
+    VM.run(:left, :dbl, 1)
+    VM.run(:left, :dbl, 1)
+    VM.run(:left, :K, 0)
+    VM.run(:left, :S, 0)
+    VM.run(:right, :get, 0)
+    VM.run(:left, :K, 0)
+    VM.run(:left, :S, 0)
+    VM.run(:right, :succ, 0)
+    VM.run(:right, :zero, 0)
     assert_equal [:I], VM.oslot(0).field
     assert_equal 16, VM.oslot(1).field
   end

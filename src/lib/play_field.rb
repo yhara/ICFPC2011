@@ -44,12 +44,6 @@ class PlayField
       @opponent = @enemy
     end
     @turn += 1 if @proponent.name == @first_player_name
-    zombies!
-  end
-
-  # ソンビが動く！！
-  def zombies!
-    # TODO:
   end
 
   def my_turn?

@@ -2,6 +2,13 @@
 require "errors"
 
 class VM
+  # ゾンビ状態を表現するフラグ。このフラグによって以下のカードの処理を変化させる。
+  # * inc
+  # * dec
+  # * attack
+  # * help
+  @@processing_zombies = false
+  
   # VMが保持するPlayFieldを指定
   def self.setup(play_field)
     self.play_field = play_field
@@ -29,7 +36,29 @@ class VM
     end
     puts play_field.opponent if opts[:dump]
   end
-
+  
+  # proponentのスロットのうち、ゾンビのものについて以下の処理を行う。
+  # (1)上から順番にproponentのスロットを見ていく。
+  # (2)vitalityが-1のスロットを見つける。
+  # (3)[:I]を引数に渡してfieldを実行する。このときエラーが発生してもゾンビの処理は続けること。
+  # (4)全てのスロットを見終わったら、ゾンビのvitalityを0、fieldを[:I]にする。
+  def self.zombies!
+    @@processing_zombies = true
+    play_field.proponent.slots.each do |slot|
+      if slot.vitality == -1
+        evaluate(slot.field, [:I])
+      end
+    end
+    play_field.proponent.slots.each do |slot|
+      if slot.vitality == -1
+        slot.vitality = 0
+        slot.field = [:I]
+      end
+    end
+  ensure
+    @@processing_zombies = false
+  end
+  
   # value describe:
   # function is array: [:I], [:K, [:help, [:zero]]]
   # integer: 0..65535
@@ -148,7 +177,11 @@ class VM
   # is not a valid slot number, and returns the identity function.
   def self.inc(i)
     raise NativeError, "#{i} is not fixnum." unless i.is_a?(Fixnum)
-    pslot(i).vitality += 1 if pslot(i).vitality > 0 && pslot(i).vitality < 65535
+    if @@processing_zombies
+      pslot(i).vitality -= 1 if pslot(i).vitality > 0
+    else
+      pslot(i).vitality += 1 if pslot(i).vitality > 0 && pslot(i).vitality < 65535
+    end
     return [:I]
   end
 
@@ -157,7 +190,11 @@ class VM
   # does nothing if v<=0, or raises an error if i is not a valid slot
   # number, and returns the identity function.
   def self.dec(i)
-    oslot(255 - i).vitality -= 1
+    if @@processing_zombies
+      oslot(255 - i).vitality += 1
+    else
+      oslot(255 - i).vitality -= 1
+    end
     return [:I]
   end
 
@@ -244,8 +281,18 @@ class VM
     oslot(255 - i).vitality = -1 if oslot(255 - i).vitality == 0
     return [:I]
   end
+  
+  # 単体テストのためにアクセサを用意。
+  def self.processing_zombies=(val)
+    @@processing_zombies = val
+  end
+
+  def self.processing_zombies
+    return @@processing_zombies
+  end
 
   private
+  
   def self.play_field=(pf)
     @@play_field = pf
   end

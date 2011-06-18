@@ -1,16 +1,18 @@
 # -*- coding: utf-8 -*-
-require "play_field"
-require "errors"
-
 class VM
-  def self.setup
-    @@play_field = PlayField.new
+  # VMが保持するPlayFieldを指定
+  def self.setup(play_field)
+    self.play_field = play_field
   end
 
-  def self.play_field
-    @@play_field
+  # VMが保持するPlayFieldに対して処理を実行
+  def self.simulate(play_field, &block)
+    self.play_field = play_field
+    block.call(self)
+    self.play_field = nil
   end
 
+  # VMが保持するPlayFieldに対して処理を実行
   def self.run(lr, card, slot, opts={})
     card = card.to_sym
     card = card == :zero ? 0 : [card]
@@ -22,7 +24,7 @@ class VM
     else
       raise "lr value #{lr} is invalid"
     end
-    puts @@play_field.opponent if opts[:dump]
+    puts play_field.opponent if opts[:dump]
   end
 
   # value describe:
@@ -30,7 +32,7 @@ class VM
   # integer: 0..65535
   def self.evaluate(value, arg=nil)
     value ||= []
-    @@play_field.apply_cnt+=1
+    play_field.apply_cnt+=1
     optimize!(value)
     return nil if value.empty?
     return value[0] if value[0].is_a?(Fixnum)
@@ -48,11 +50,11 @@ class VM
   end
 
   def self.oslot(i)
-    @@play_field.opponent.slots[i]
+    play_field.opponent.slots[i]
   end
 
   def self.pslot(i)
-    @@play_field.proponent.slots[i]
+    play_field.proponent.slots[i]
   end
 
   # Card "I" is the identity function. [Remark: It is called the I
@@ -86,6 +88,7 @@ class VM
   # alive. It raises an error if i is not a valid slot number or the
   # slot is dead.
   def self.get(i)
+    raise NativeError, "#{oslot(i)} is dead." if oslot(i).dead?
     return oslot(i).field
   end
 
@@ -234,5 +237,14 @@ class VM
     pslot(i).field = x
     pslot(i).vitality = -1 if oslot(i).vitality == 0
     return [:I]
+  end
+
+  private
+  def self.play_field=(pf)
+    @@play_field = pf
+  end
+
+  def self.play_field
+    @@play_field
   end
 end

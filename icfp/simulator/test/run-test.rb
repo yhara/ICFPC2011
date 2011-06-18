@@ -6,7 +6,7 @@ $LOAD_PATH.unshift(File.join(top_dir, "lib"))
 $LOAD_PATH.unshift(File.join(top_dir, "test"))
 
 require "test/unit"
-require "vm"
+require "world"
 
 test_file = "./test/test_*.rb"
 Dir.glob(test_file) do |file|

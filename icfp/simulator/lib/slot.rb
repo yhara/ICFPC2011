@@ -21,6 +21,10 @@ class Slot
     return @vitality > 0
   end
   
+  def dead?
+    return @vitality <= 0
+  end
+
   # ゾンビ状態かどうか。
   def zombied?
     return @vitality == -1

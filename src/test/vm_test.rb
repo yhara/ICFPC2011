@@ -106,6 +106,14 @@ class VMTest < Test::Unit::TestCase
     end
   end
 
+  def test_s_put
+    VM.simulate(PlayField.new) do |vm|
+      [-1, 0, 255, 256, 65535, 65536, [:I]].each do |i|
+        assert_equal([:I], vm.put(i))
+      end
+    end
+  end
+
   def test_S
     VM.simulate(PlayField.new) do |vm|
       assert_equal [:S2, [:I]], vm.S([:I])

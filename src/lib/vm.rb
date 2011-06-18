@@ -190,10 +190,11 @@ class VM
   # does nothing if v<=0, or raises an error if i is not a valid slot
   # number, and returns the identity function.
   def self.dec(i)
+    raise NativeError, "#{i} is not fixnum." unless i.is_a?(Fixnum)
     if @@processing_zombies
-      oslot(255 - i).vitality += 1
+      oslot(255 - i).vitality += 1 if oslot(255 - i).vitality > 0 && pslot(i).vitality < 65535
     else
-      oslot(255 - i).vitality -= 1
+      oslot(255 - i).vitality -= 1 if oslot(255 - i).vitality > 0
     end
     return [:I]
   end

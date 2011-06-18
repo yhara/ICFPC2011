@@ -18,6 +18,7 @@ class TestPlayField < Test::Unit::TestCase
   end
 
   def test_swap_players
+    assert_equal 0, @play_field.turn
     assert_equal :myself, @play_field.opponent.name
     assert_equal :enemy, @play_field.proponent.name
     @play_field.apply_cnt = 2
@@ -25,5 +26,7 @@ class TestPlayField < Test::Unit::TestCase
     assert_equal :enemy, @play_field.opponent.name
     assert_equal :myself, @play_field.proponent.name
     assert_equal 0, @play_field.apply_cnt
+    @play_field.swap_players
+    assert_equal 1, @play_field.turn
   end
 end

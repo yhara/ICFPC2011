@@ -5,13 +5,14 @@ class PlayField
   def initialize(first_player=:myself)
     @myself = Player.new(:myself)
     @enemy = Player.new(:enemy)
-    @trun = 0
+    @turn = 0
     @opponent = @myself
     @proponent = @enemy
+    @first_player = first_player
     @apply_cnt = 0
   end
 
-  attr_reader :myself, :enemy, :trun, :opponent, :proponent
+  attr_reader :myself, :enemy, :turn, :opponent, :proponent
   attr_accessor :apply_cnt
 
   def run(lr, card, slot, opts={})
@@ -39,12 +40,7 @@ class PlayField
       @opponent = @myself
       @proponent = @enemy
     end
-  end
-
-  def change_turn
-    swap_players
-    @trun+=1
-    zombies!
+    change_turn if @opponent.name == @first_player
   end
 
   # ソンビが動く！！
@@ -53,6 +49,11 @@ class PlayField
   end
 
   private
+  def change_turn
+    @turn+=1
+    zombies!
+  end
+
   def deepclone
     return Marshal.load(Marshal.dump(self))
   end

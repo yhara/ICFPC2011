@@ -6,6 +6,7 @@ require 'errors'
 require 'solver'
 require 'player'
 require 'slot'
+require 'utils'
 
 # 環境を表現する。
 class World

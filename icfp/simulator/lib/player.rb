@@ -1,9 +1,11 @@
+require "slot"
+
 class Player
   INITIAL_VITALITY = 10000
 
   def initialize(name=:mine)
     @name = name
-    @slots = (0..255).map{[INITIAL_VITALITY, [:I]]}
+    @slots = (0..255).map{Slot.new}
     @apply_cnt = 0
 
     def @slots.[](i)

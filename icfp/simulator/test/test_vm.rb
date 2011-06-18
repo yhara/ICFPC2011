@@ -6,8 +6,8 @@ class TestRepository < Test::Unit::TestCase
   def test_example1
     VM.run(VM::APPLY_SLOT_TO_CARD, :inc, 0)
     VM.run(VM::APPLY_SLOT_TO_CARD, :zero, 0)
-    assert_equal [:I], VM.oslot(0)[1]
-    assert_equal 10001, VM.oslot(0)[0]
+    assert_equal [:I], VM.oslot(0).field
+    assert_equal 10001, VM.oslot(0).vitality
   end
 
   def test_example2
@@ -30,12 +30,12 @@ class TestRepository < Test::Unit::TestCase
     VM.run(VM::APPLY_CARD_TO_SLOT, :S, 0)
     VM.run(VM::APPLY_SLOT_TO_CARD, :succ, 0)
     VM.run(VM::APPLY_SLOT_TO_CARD, :zero, 0)
-    assert_equal [:I], VM.oslot(0)[1]
-    assert_equal 16, VM.oslot(1)[1]
+    assert_equal [:I], VM.oslot(0).field
+    assert_equal 16, VM.oslot(1).field
   end
 
   def test_s_k_s_help_zero
-    VM.oslot(1)[1] = 10
+    VM.oslot(1).field = 10
     func = [:S3, [:K1, [:S3, [:K1, [:help3, 0, 1]], [:get]]], [:succ]]
     assert_equal [:I], VM.evaluate(func, 0)
   end

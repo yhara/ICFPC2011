@@ -17,9 +17,9 @@ class VM
     card = card == :zero ? 0 : [card]
     case lr
     when APPLY_CARD_TO_SLOT
-      oslot(slot)[1] = evaluate(card, oslot(slot)[1])
+      oslot(slot).field = evaluate(card, oslot(slot).field)
     when APPLY_SLOT_TO_CARD
-      oslot(slot)[1] = evaluate(oslot(slot)[1], card)
+      oslot(slot).field = evaluate(oslot(slot).field, card)
     else
       raise "lr value #{lr} is invalid"
     end
@@ -72,7 +72,7 @@ class VM
   end
 
   def self.get(i)
-    return oslot(i)[1]
+    return oslot(i).field
   end
 
   def self.put(x)
@@ -102,12 +102,12 @@ class VM
   end
 
   def self.inc(i)
-    oslot(i)[0]+=1
+    oslot(i).vitality+=1
     return [:I]
   end
 
   def self.dec(i)
-    pslot(255-i)[0]-=1
+    pslot(255-i).vitality-=1
     return [:I]
   end
 
@@ -120,8 +120,8 @@ class VM
   end
 
   def self.attack3(i, j, n)
-    oslot(i)[0] -= n
-    oslot(255-j)[0] -= n * 0.9
+    oslot(i).vitality -= n
+    oslot(255-j).vitality -= n * 0.9
     return :I
   end
 
@@ -134,17 +134,17 @@ class VM
   end
 
   def self.help3(i, j, n)
-    oslot(i)[0] -= n
-    oslot(j)[0] += n * 1.1
+    oslot(i).vitality -= n
+    oslot(j).vitality += n * 1.1
     return [:I]
   end
 
   def self.copy(i)
-    return pslot(i)[1]
+    return pslot(i).field
   end
 
   def self.revive(i)
-    oslot(i)[0] = 1 if oslot(i)[0] <= 0 
+    oslot(i).vitality = 1 if oslot(i).vitality <= 0 
     return [:I]
   end
 
@@ -153,8 +153,8 @@ class VM
   end
 
   def self.zombie2(i, x)
-    pslot(i)[1] = x
-    pslot(i)[0] = -1 if oslot(i)[0] == 0
+    pslot(i).field = x
+    pslot(i).vitality = -1 if oslot(i).vitality == 0
     return [:I]
   end
 end

@@ -27,8 +27,7 @@ class World
   end
 
   # 実行
-  def run
-    first_player = gets
+  def run(first_player_type)
     first_player = first_player == "0" ? :mine : :enemy
     @play_field = PlayField.new(first_player)
     loop {

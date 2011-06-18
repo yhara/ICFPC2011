@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 require "player"
 
 class PlayField
@@ -19,6 +20,15 @@ class PlayField
     end
   end
 
+  # 自身を複製してrunする
+  def apply(lr, card, slot, opts={})
+    dup = deepclone
+    VM.simulate(dup) do |vm|
+      vm.run(lr, card, slot, opts)
+    end
+    return dup
+  end
+
   def change_player
   end
 
@@ -30,5 +40,10 @@ class PlayField
   end
 
   def after_turn
+  end
+
+  private
+  def deepclone
+    return Marshal.load(Marshal.dump(self))
   end
 end

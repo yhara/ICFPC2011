@@ -1,14 +1,11 @@
 require "world"
+require "slots"
 
 class Player
   def initialize(name=:mine)
     @name = name
-    @slots = (0...World::NUM_SLOTS).map{Slot.new}
-
-    def @slots.[](i)
-      raise IndexError, "index #{i} outside of array" if i < 0
-      return self.fetch(i)
-    end
+    @slots = Slots.new(World::NUM_SLOTS)
+    World::NUM_SLOTS.times{|i| @slots[i] = Slot.new}
   end
 
   attr_reader :slots, :name

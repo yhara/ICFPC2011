@@ -47,17 +47,29 @@ class World
   private
   def get_enemy_answer
     lr = $stdin.gets.chomp
-    lr = (lr == "1") ? :left : :right
-    card = $stdin.gets.chomp
-    slot = $stdin.gets.chomp.to_i
+    if lr == "1"
+      lr = :left
+      card = $stdin.gets.chomp
+      slot = $stdin.gets.chomp.to_i
+    else
+      lr = :right
+      slot = $stdin.gets.chomp.to_i
+      card = $stdin.gets.chomp
+    end
     return [lr, card.to_sym, slot]
   end
 
   def answer_output(answer)
     out = []
-    out[0] = answer[0] == :left ? "1" : "2"
-    out[1] = answer[1].to_s
-    out[2] = answer[2].to_s
+    if answer[0] == :left
+      out[0] = "1"
+      out[1] = answer[1].to_s
+      out[2] = answer[2].to_s
+    else
+      out[0] = "2"
+      out[1] = answer[2].to_s
+      out[2] = answer[1].to_s
+    end
     puts out[0].to_s
     puts out[1].to_s
     puts out[2].to_s

@@ -204,6 +204,45 @@ class VMTest < Test::Unit::TestCase
     end
   end
 
+  def test_s_dec
+    VM.simulate(PlayField.new) do |vm|
+      assert_equal([:I], vm.oslot(255).field)
+      assert_equal(10000, vm.oslot(255).vitality)
+      initial_and_expects = [
+                             [-1, -1],
+                             [0, 0],
+                             [1, 0],
+                             [10000, 9999],
+                             [65535, 65534]
+                            ]
+      initial_and_expects.each do |initial, expect|
+        vm.oslot(255).vitality = initial
+        vm.run(:right, :dec, 0)
+        vm.run(:right, :zero, 0)
+        assert_equal([:I], vm.oslot(255).field)
+        assert_equal(expect, vm.oslot(255).vitality)
+      end
+    end
+  end
+
+  def test_s_dec__not_fixnum
+    VM.simulate(PlayField.new) do |vm|
+      assert_raise(NativeError) do
+        vm.dec([:I])
+      end
+    end
+  end
+
+  def test_s_inc__invalid_slot_number
+    VM.simulate(PlayField.new) do |vm|
+      [-1, 256].each do |i|
+        assert_raise(IndexNativeError) do
+          vm.dec(i)
+        end
+      end
+    end
+  end
+
   def test_zombies_b
     play_field = PlayField.new(:myself)
     play_field.proponent.slots[0].vitality = -1

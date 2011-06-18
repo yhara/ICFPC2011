@@ -40,6 +40,7 @@ class PlayField
       @opponent = @myself
       @proponent = @enemy
     end
+    zombies!
     change_turn if @opponent.name == @first_player
   end
 
@@ -55,7 +56,6 @@ class PlayField
   private
   def change_turn
     @turn+=1
-    zombies!
   end
 
   def deepclone

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 require "play_field"
+require "errors"
 
 class VM
   def self.setup
@@ -29,7 +30,7 @@ class VM
   # integer: 0..65535
   def self.evaluate(value, arg=nil)
     value ||= []
-    @@play_field.opponent.apply_cnt+=1
+    @@play_field.apply_cnt+=1
     optimize!(value)
     return nil if value.empty?
     return value[0] if value[0].is_a?(Fixnum)
@@ -62,6 +63,7 @@ class VM
   # if n<65535 (or returns 65535 if n=65535). It raises an error if n
   # is not an integer.
   def self.succ(n)
+    raise NativeError, "#{n} is not fixnum." unless n.is_a?(Fixnum)
     return n.succ if n < 65535
     return n
   end
@@ -70,6 +72,7 @@ class VM
   # (n times 2) if n<32768 (or returns 65535 if n>=32768). It raises
   # an error if n is not an integer.
   def self.dbl(n)
+    raise NativeError, "#{n} is not fixnum." unless n.is_a?(Fixnum)
     if n < 32768
       n = n * 2
     else
@@ -111,8 +114,11 @@ class VM
   end
 
   def self.S3(f, g, x)
+    raise NativeError, "#{f} is not function." unless f.is_a?(Array)
     h = evaluate(f, x)
+    raise NativeError, "#{g} is not function." unless g.is_a?(Array)
     y = evaluate(g, x)
+    raise NativeError, "#{h} is not function." unless h.is_a?(Array)
     return evaluate(h, y)
   end
 

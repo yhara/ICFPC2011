@@ -6,7 +6,6 @@ class Player
   def initialize(name=:mine)
     @name = name
     @slots = (0..255).map{Slot.new}
-    @apply_cnt = 0
 
     def @slots.[](i)
       raise IndexError, "index #{i} outside of array" if i < 0

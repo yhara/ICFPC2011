@@ -7,9 +7,11 @@ class PlayField
     @trun = 0
     @opponent = @myself
     @proponent = @enemy
+    @apply_cnt = 0
   end
 
   attr_reader :myself, :enemy, :trun, :opponent, :proponent
+  attr_accessor :apply_cnt
 
   def change_player
   end

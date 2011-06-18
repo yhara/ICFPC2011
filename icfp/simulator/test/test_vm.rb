@@ -39,4 +39,51 @@ class TestRepository < Test::Unit::TestCase
     func = [:S3, [:K1, [:S3, [:K1, [:help3, 0, 1]], [:get]]], [:succ]]
     assert_equal [:I], VM.evaluate(func, 0)
   end
+
+  def test_succ
+    assert_equal 65535, VM.succ(65534)
+    assert_equal 65535, VM.succ(65535)
+    assert_raise(NativeError) do
+      VM.succ([:I])
+    end
+  end
+
+  def test_dbl
+    assert_equal 65526, VM.dbl(32763)
+    assert_equal 65535, VM.dbl(32768)
+    assert_raise(NativeError) do
+      VM.dbl([:I])
+    end
+  end
+
+  def test_get
+    VM.oslot(0).field = 0
+    assert_equal 0, VM.get(0)
+    assert_equal [:I], VM.get(255)
+    assert_raise(IndexError) do
+      VM.get(256)
+    end
+  end
+
+  def test_S
+    assert_equal [:S2, [:I]], VM.S([:I])
+    assert_equal [:S3, [:I], [:I]], VM.S2([:I], [:I])
+    assert_equal [:I], VM.S3([:I], [:I], [:I])
+    assert_equal [:I], VM.S3([:I], [:I], [:I])
+    VM.setup
+    assert_raise(NativeError) do
+      assert_equal [:I], VM.S3([:I], [:I], 0)
+    end
+    assert_equal 2, VM.play_field.apply_cnt
+    VM.setup
+    assert_raise(NativeError) do
+      assert_equal [:I], VM.S3([:I], 0, 0)
+    end
+    assert_equal 1, VM.play_field.apply_cnt
+    VM.setup
+    assert_raise(NativeError) do
+      assert_equal [:I], VM.S3(0, 0, 0)
+    end
+    assert_equal 0, VM.play_field.apply_cnt
+  end
 end

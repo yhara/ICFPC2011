@@ -164,4 +164,43 @@ class VMTest < Test::Unit::TestCase
       end
     end
   end
+
+  def test_s_inc
+    VM.simulate(PlayField.new) do |vm|
+      assert_equal([:I], vm.pslot(0).field)
+      assert_equal(10000, vm.pslot(0).vitality)
+      initial_and_expects = [
+                             [-1, -1],
+                             [0, 0],
+                             [1, 2],
+                             [10000, 10001],
+                             [65534, 65535],
+                             [65535, 65535]
+                            ]
+      initial_and_expects.each do |initial, expect|
+        vm.pslot(0).vitality = initial
+        vm.run(:right, :inc, 0)
+        vm.run(:right, :zero, 0)
+        assert_equal([:I], vm.pslot(0).field)
+        assert_equal(expect, vm.pslot(0).vitality)
+      end
+    end
+  end
+
+  def test_s_inc__not_fixnum
+    VM.simulate(PlayField.new) do |vm|
+      assert_raise(NativeError) do
+        vm.inc([:I])
+      end
+    end
+  end
+
+  # 仕様の範囲外
+  def test_s_inc__outside_specs
+    VM.simulate(PlayField.new) do |vm|
+      assert_raise(IndexNativeError) do
+        vm.inc(256)
+      end
+    end
+  end
 end

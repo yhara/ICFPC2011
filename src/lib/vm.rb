@@ -147,7 +147,8 @@ class VM
   # v<65535, does nothing if v=65535 or v<=0, or raises an error if i
   # is not a valid slot number, and returns the identity function.
   def self.inc(i)
-    pslot(i).vitality += 1
+    raise NativeError, "#{i} is not fixnum." unless i.is_a?(Fixnum)
+    pslot(i).vitality += 1 if pslot(i).vitality > 0 && pslot(i).vitality < 65535
     return [:I]
   end
 

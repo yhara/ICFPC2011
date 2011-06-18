@@ -29,17 +29,27 @@ class PlayField
     return dup
   end
 
-  def change_player
+  # プレイヤー変更
+  def swap_players
+    @apply_cnt = 0
+    if @opponent.name == :myself
+      @opponent = @enemy
+      @proponent = @myself
+    else
+      @opponent = @myself
+      @proponent = @enemy
+    end
   end
 
-  def next_turn
-    return [opponent, proponent]
+  def change_turn
+    swap_players
+    @trun+=1
+    zombies!
   end
 
-  def before_turn
-  end
-
-  def after_turn
+  # ソンビが動く！！
+  def zombies!
+    # TODO:
   end
 
   private

@@ -28,12 +28,14 @@ class World
 
   # 実行
   def run(first_player_type)
-    first_player = first_player == "0" ? :mine : :enemy
+    $stdout.sync = true
+    $stdin.sync = true
+    first_player = first_player_type == "0" ? :mine : :enemy
     @play_field = PlayField.new(first_player)
     loop {
       if @play_field.my_turn?
         answer = @solver.solve
-        puts answer
+        answer_output(answer)
       else
         answer = get_enemy_answer
       end
@@ -44,10 +46,20 @@ class World
 
   private
   def get_enemy_answer
-    lr = gets
-    lr = lr == "1" ? :left : :right
-    card = gets
-    slot = gets.to_i
-    return [lr, card, slot]
+    lr = $stdin.gets.chomp
+    lr = (lr == "1") ? :left : :right
+    card = $stdin.gets.chomp
+    slot = $stdin.gets.chomp.to_i
+    return [lr, card.to_sym, slot]
+  end
+
+  def answer_output(answer)
+    out = []
+    out[0] = answer[0] == :left ? "1" : "2"
+    out[1] = answer[1].to_s
+    out[2] = answer[2].to_s
+    puts out[0].to_s
+    puts out[1].to_s
+    puts out[2].to_s
   end
 end

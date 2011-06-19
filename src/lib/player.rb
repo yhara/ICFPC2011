@@ -13,7 +13,7 @@ class Player
   def to_s
     str = [@name]
     @slots.each_with_index do |s, i|
-      unless s.field == [:I]
+      if s.field != [:I] || s.vitality != 10000
         str << s.to_s
       end
     end

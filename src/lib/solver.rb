@@ -18,6 +18,7 @@ class Solver
       @current_strategy = c.new(*args)
     end
     operation = @current_strategy.next_operation
+    log(operation.inspect)
     return operation
   end
 

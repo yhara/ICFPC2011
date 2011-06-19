@@ -187,6 +187,14 @@ class ReviveSlot < Strategy
   end
 end
 
+class KillEnemy255 < Strategy
+  def initialize
+    o "put", 0
+    o 0, "dec"
+    o 0, "zero"
+  end
+end
+
 # ゾンビを送り込む
 class ZombiePowder < Strategy
   @@zombie_evac_count = 0

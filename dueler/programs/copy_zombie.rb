@@ -121,12 +121,12 @@ make_num 5, 1
 make_num 6, 10000
 
 0.step(254, 2) do |i|
+  # zombie関数を実行する
+  zomie_powder(target: 255, func: 1, tmp: 2)
+
   # i, jを2ふやす
   o "succ", 4
   o "succ", 4
   o "succ", 5
   o "succ", 5
-
-  # zombie関数を実行する
-  zomie_powder(target: 255, func: 1, tmp: 2)
 end

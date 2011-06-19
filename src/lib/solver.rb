@@ -15,6 +15,7 @@ class Solver
     c, *args = *select_strategy_class
     if @current_strategy.n_left_operations <= 0 ||
         @current_strategy.class != c
+      log("change strategy #{c.inspect}")
       @current_strategy = c.new(*args)
     end
     operation = @current_strategy.next_operation

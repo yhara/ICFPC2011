@@ -60,3 +60,22 @@ def bind(slot, num, options={})
   o slot, "get"    # s: S(K(card))(get)
   o slot, "zero"   # s: S(K(card))(get)(zero) => card(i)
 end
+
+# スロットtoの関数をスロットfromに適用する
+# 結果はtoに保存される
+# つまり
+#   f[to] = to(from)
+# 0はテンポラリとして破壊される
+# 0を使うのは、適用したい関数を「get[zero]」で取り出せるようにするため
+def bind_func(to, from)
+  make_num(0, from)  # 0: from
+  o "get", 0         # 0: get(from)
+                     #  = 引数にしたい関数
+
+  o "K", to      # to: K[_]
+  o "S", to      # to: S[K[_]]
+  o to, "get"    # to: S[K[_]][get]
+  o to, "zero"   # to: S[K[_]][get][zero]
+                 #  = _( get(0) )
+                 #  = 適用したい関数( 引数にしたい関数 )
+end

@@ -46,7 +46,6 @@ class Strategy
 
   # 指定するスロットのcardの引数に指定した数値をbindする
   def bind(slot, num, options={})
-    o "put", 0
     make_num(0, num)
     options[:apply_to_zero] ||= []
     options[:apply_to_zero].each do |card|
@@ -159,14 +158,18 @@ end
 
 # ゾンビを送り込む
 class ZombiePowder < Strategy
-  def initialize(dead_slot_no)
+  def initialize(dead_slot_no=255)
     pf = World.instance.play_field
+
+    # 相手フィールドの元気な2つを攻撃。help置き場はランダム。
     h_index = rand(127)+1
     fs, ss = take_max_slots(h_index, pf.enemy.slots)
     sirial_help_for_zombie(h_index, fs.slot_no, ss.slot_no, fs.vitality)
+
+    # zombie置き場もランダム。対象は引数からもらう。
     z_index = rand(127)+1
     loop{ z_index = rand(127)+1 } if z_index == h_index
-    zombie_powder(z_index, dead_slot_no)
+    zombie_powder(z_index, dead_slot_no, h_index)
   end
 
   def sirial_help_for_zombie(s, i, j, v)
@@ -181,19 +184,20 @@ class ZombiePowder < Strategy
 
   # 送り込むzomibeを準備
   # 2: S(K(S(zombie(target_slot))(get)))(succ)(zero)
-  def zombie_powder(use_slot, target_slot)
+  def zombie_powder(use_slot, target_slot, h_index)
     o "put", use_slot
-    o use_slot, "zombie"        # s: zombie
-    bind(use_slot, target_slot) # s: zombie(target_slot)
-    o "K", use_slot             # s: S(zombie(target_slot))
-    o "S", use_slot             # s: S(K(zombie(target_slot))))
-    o use_slot, "get"           # s: S(K(zombie(target_slot)))(get)
-    o "K", use_slot             # s: K(S(K(zombie(target_slot)))(get))
-    o "S", use_slot             # s: S(K(S(K(zombie(target_slot)))(get)))
-    o use_slot, "succ"          # s: S(K(S(K(zombie(target_slot)))(get)))(succ)
+    o use_slot, "zombie"            # 2: zombie
+    bind(use_slot, target_slot-255) # 2: zombie(target_slot)
+    o "K", use_slot                 # 2: S(zombie(target_slot))
+    o "S", use_slot                 # 2: S(K(zombie(target_slot))))
+    o use_slot, "get"               # 2: S(K(zombie(target_slot)))(get)
+    o "K", use_slot                 # 2: K(S(K(zombie(target_slot)))(get))
+    o "S", use_slot                 # 2: S(K(S(K(zombie(target_slot)))(get)))
+    make_num 0, h_index
+    o use_slot, "get"
 
-    # zobie powder!!!!!!!!!!!!!!!!!!!!
-    o 2, "zero"                 # s: S(K(S(zombie(target_slot))(get)))(succ)(zero)
+    # zombie powder!!!!!!!!!!!!!!1
+    o use_slot, "zero"
   end
 end
 

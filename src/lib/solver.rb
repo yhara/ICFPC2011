@@ -33,10 +33,10 @@ class Solver
       slot.vitality <= 0
     }
     if my_dead_slot
-      return Revive, my_dead_slot.slot_no
+      return ReviveSlot, my_dead_slot.slot_no
     end
 
-    enemy_dead_slot = World.instance.play_field.myself.slots.detect { |slot|
+    enemy_dead_slot = World.instance.play_field.enemy.slots.detect { |slot|
       slot.vitality <= 0
     }
     if !enemy_dead_slot

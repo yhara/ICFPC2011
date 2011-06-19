@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 class Strategy
   attr_reader :conditions
+  attr_reader :left_operations
 
   def n_left_operations
     return @left_operations.length

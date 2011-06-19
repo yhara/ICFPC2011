@@ -36,5 +36,4 @@ def make_about_num(slot, num)
     end
   end
 end
-
-make_about_num(100, 10000) # => 17ターンで生成することが可能
+# make_about_num(100, 10000) # => 17ターンで生成することが可能

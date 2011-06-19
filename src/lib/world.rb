@@ -39,12 +39,24 @@ class World
     first_player = first_player_type == "0" ? :myself : :enemy
     @play_field = PlayField.new(first_player)
     loop {
-        if @play_field.my_turn?
+      if @play_field.my_turn?
+        answer = nil
+        begin
           answer = @solver.solve
-          answer_output(answer)
-        else
-          answer = get_enemy_answer
+        rescue Exception => es
+          answer = [:left, :I, 0]
+          log("Solver#solveの実行中に予期せぬ例外が発生しました。何も変化がない処理を出力させます。 例外クラス=<#{es}> メッセージ=<#{es}> 出力=<#{answer.inspect}>")
+          es.backtrace.each do |l|
+            log("  #{l}")
+          end
+          if ENV["yarunee_debug"]
+            raise
+          end
         end
+        answer_output(answer)
+      else
+        answer = get_enemy_answer
+      end
       begin
         @play_field.run(*(answer << opts))
       rescue NativeError => ex

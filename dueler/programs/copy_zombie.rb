@@ -110,13 +110,23 @@ end
 attack(128, 0, 9000)
 attack(129, 0, 9000)
 
-# 最短のケース。52ターンで攻撃可能。
+# 攻撃用関数をスロット1に作る。
+# スロット2,3はテンポラリとして破壊される
+# スロット4,5,6はhelp(i,j,n)に対応
 help_for_zombie(1, 2, 3, 4, 5, 6)
-make_num 6, 10000
-target = 0
-target.step(2550, 2) do |i|
 
-  make_num 4, i
-  make_num 5, i+1
+# 初期パラメータをセット
+make_num 4, 0
+make_num 5, 1
+make_num 6, 10000
+
+0.step(254, 2) do |i|
+  # i, jを2ふやす
+  o "succ", 4
+  o "succ", 4
+  o "succ", 5
+  o "succ", 5
+
+  # zombie関数を実行する
   zomie_powder(target: 255, func: 1, tmp: 2)
 end

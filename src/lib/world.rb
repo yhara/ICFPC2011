@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-require 'singleton'
 require 'vm'
 require 'play_field'
 require 'errors'
@@ -10,8 +9,6 @@ require 'utils'
 
 # 環境を表現する。
 class World
-  include Singleton
-
   # プレイヤーのスロット数。
   NUM_SLOTS = 256
 
@@ -20,6 +17,13 @@ class World
   def initialize
     @solver = Solver.new
     @play_field = PlayField.new
+  end
+
+  # 「include Singleton」を使うと以下の例外が発生するので自前
+  #   <internal:prelude>:8:in `lock': deadlock; recursive locking (ThreadError)
+  @@instance = World.new
+  def self.instance
+    return @@instance
   end
 
   # 環境を初期化する

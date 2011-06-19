@@ -233,12 +233,21 @@ class VM
     raise NativeError, "#{n} is not fixnum." unless n.is_a?(Fixnum)
     raise NativeError, "#{n} is greater than pslot(#{i}).vitality:#{pslot(i).vitality}." if n > pslot(i).vitality
     pslot(i).vitality -= n
-    if oslot(255 - j).vitality > 0
-      damage = n * 9 / 10
-      if damage > oslot(255 - j).vitality
-        oslot(255 - j).vitality = 0
+    if oslot(255 - j).alived?
+      if @@processing_zombies
+        recover = n * 9 / 10
+        if oslot(255 - j).vitality + recover > 65535
+          oslot(255 - j).vitality = 65535
+        else
+          oslot(255 - j).vitality += recover
+        end
       else
-        oslot(255 - j).vitality -= damage
+        damage = n * 9 / 10
+        if damage > oslot(255 - j).vitality
+          oslot(255 - j).vitality = 0
+        else
+          oslot(255 - j).vitality -= damage
+        end
       end
     end
     return [:I]

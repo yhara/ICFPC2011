@@ -48,6 +48,8 @@ class VM
       slot.field = [:I]
     end
     if opts[:dump]
+      log("myself: " + play_field.myself.to_s)
+      log("enemy: " + play_field.enemy.to_s)
       log("proponent: " + play_field.proponent.to_s)
       log("oppnent: " + play_field.opponent.to_s)
     end

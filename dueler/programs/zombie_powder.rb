@@ -71,7 +71,7 @@ attack(129, 0, 9000)
 
 # 最短のケース。52ターンで攻撃可能。
 slot1 = 10
-target = 1
+target = 0
 target.step(2550, 2) do |i|
   help_for_zombie(i, i+1)
   zomie_powder(0)

@@ -387,13 +387,38 @@ class VMTest < Test::Unit::TestCase
   end
 
   def test_zombies_b
+    # --- 準備 ---
     play_field = PlayField.new(:myself)
+
+    #0: dec(0)
     play_field.proponent.slots[0].vitality = -1
     play_field.proponent.slots[0].field = [:S3, [:K2, [:dec]], [:K2, 0]]
+
+    #1: get -> ゾンビ処理によってIが渡されてエラーになる
+    play_field.proponent.slots[1].vitality = -1
+    play_field.proponent.slots[1].field = [:get]
+
+    #2: inc(3)
+    play_field.proponent.slots[2].vitality = -1
+    play_field.proponent.slots[2].field = [:S3, [:K2, [:inc]], [:K2, 3]]
+
+    # --- ゾンビ処理 ---
     VM.zombies!(play_field)
+
+    # --- 結果 ---
+    #0: dec(0)
     assert_equal(0, play_field.proponent.slots[0].vitality)
     assert_equal([:I], play_field.proponent.slots[0].field)
     assert_equal(10001, play_field.opponent.slots[255 - 0].vitality)
+    
+    #1: get: 何もしない
+    assert_equal(0, play_field.proponent.slots[1].vitality)
+    assert_equal([:I], play_field.proponent.slots[1].field)
+
+    #2: inc(3)
+    assert_equal(0, play_field.proponent.slots[2].vitality)
+    assert_equal([:I], play_field.proponent.slots[2].field)
+    assert_equal(9999, play_field.proponent.slots[3].vitality)
   end
 
   def test_s_attack

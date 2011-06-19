@@ -53,9 +53,13 @@ class VM
     old_play_field = self.play_field
     self.play_field = play_field
     @@processing_zombies = true
-    play_field.proponent.slots.each do |slot|
+    play_field.proponent.slots.each_with_index do |slot, i|
       if slot.vitality == -1
-        evaluate(slot.field, [:I])
+        begin
+          evaluate(slot.field, [:I])
+        rescue NativeError
+          log("ゾンビ処理中にエラーが発生しました。次のスロットを処理します。: i=<#{i}> slot=<#{slot}>")
+        end
       end
     end
     play_field.proponent.slots.each do |slot|

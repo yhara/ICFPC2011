@@ -10,7 +10,6 @@ class Solver
   def solve
     # 以下のreturnを外すと順にこちらのスロットを使って
     # 相手のスロットを攻撃するコードが走る
-    return [:left, :I, 0]
 
     if @left_operations.length > 1
       return @left_operations.shift

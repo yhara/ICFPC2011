@@ -30,6 +30,8 @@ class VM
     when :left
       pslot(slot_no).field = evaluate(card, pslot(slot_no).field)
     when :right
+      f = pslot(slot_no).field
+      raise NativeError, "#{f} is fixnum." if f.is_a?(Fixnum)
       pslot(slot_no).field = evaluate(pslot(slot_no).field, card)
     else
       raise "lr value #{lr} is invalid"

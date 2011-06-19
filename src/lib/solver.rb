@@ -15,7 +15,7 @@ class Solver
     c, *args = *select_strategy_class
     if @current_strategy.n_left_operations <= 0 ||
         @current_strategy.class != c
-      log("change strategy #{c.inspect}")
+      log("change strategy #{c.inspect}, #{args.inspect}")
       @current_strategy = c.new(*args)
     end
     operation = @current_strategy.next_operation
@@ -30,7 +30,8 @@ class Solver
       return ReviveZero
     end
 
-    my_dead_slot = World.instance.play_field.myself.slots.detect { |slot|
+    my_dead_slot =
+      World.instance.play_field.myself.slots.to_a[0 ... World::NUM_SLOTS / 2].detect { |slot|
       slot.vitality <= 0
     }
     if my_dead_slot

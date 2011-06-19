@@ -168,7 +168,7 @@ class ReviveSlot < Strategy
     pf = World.instance.play_field
     if slot_index == 1
       slot = 0
-      o "put", slot if pf.myself.slots[slot].field == [:I]
+      o "put", slot if pf.myself.slots[slot].field != [:I]
       o slot, "revive"
       o "K", slot
       o "S", slot
@@ -176,7 +176,7 @@ class ReviveSlot < Strategy
       o slot, "zero"
     else
       slot = 1
-      o "put", slot if pf.myself.slots[slot].field == [:I]
+      o "put", slot if pf.myself.slots[slot].field != [:I]
       make_num(0, slot_index)
       o slot, "revive"
       o "K", slot

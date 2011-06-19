@@ -1,6 +1,14 @@
 # -*- coding: utf-8 -*-
 $stdout.sync = true
 
+def write_simulate_data(a, b, c)
+  if ENV["yarunee_simulate_data"]
+    File.open("simulate_data.csv", "a") do |f|
+      f.write("#{$player_no},#{a},#{b},#{c}\n")
+    end
+  end
+end
+
 def read
   case $stdin.gets
   when "1\n"
@@ -14,12 +22,14 @@ def read
   end
 end
 
-read if ARGV[0] == "1"
+$player_no = ARGV[0]
+read if $player_no == "1"
 
 def command(a, b, c)
   if $TRACE
     $stderr.puts "【俺のターン】#{b}(#{c})"
   end
+  write_simulate_data(a, b, c)
   puts a
   puts b
   puts c

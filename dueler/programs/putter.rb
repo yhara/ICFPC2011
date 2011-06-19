@@ -24,6 +24,7 @@ module Putter
   class Appli
     def initialize(left, right)
       @left, @right = left, right
+      @@stack ||= 0
     end
 
     def [](arg)
@@ -33,11 +34,43 @@ module Putter
     def ast
       [@left.ast, @right.ast]
     end
-
+    
+    def set_constant(num)
+      slot = 0
+      ret = [[:left, put.name, slot]] 
+      bin = []
+      while num > 0
+        num, r = num.divmod(2)
+        bin << r
+      end
+      ret << [:right, slot, zero.name]
+      while i=bin.pop
+        ret << [:left, succ.name, slot] if i==1
+        ret << [:left, dbl.name,  slot] unless bin.empty?
+      end
+      return ret
+    end
+    
+    # スロット0をインデックス
+    # スロット1をスタックの底 として使用
+    # S[K[ S[K[ 左の子 ]] [get] ]] [get][zero]
     def putter(slot)
       case 
       when Appli === @left && Appli === @right
-        raise "cannot generate opecodes for this expr"
+        @@stack += 1
+        $stderr.puts @@stack
+        ops = @left.putter(slot)
+        ops.concat(@right.putter(@@stack))
+        ops << [:left, K.name, slot]
+        ops << [:left, S.name, slot]
+        ops << [:right, slot, get.name]
+        ops << [:left, K.name, slot]
+        ops << [:left, S.name, slot]
+        ops << [:right, slot, get.name]
+        ops.concat(set_constant(@@stack))
+        ops << [:right, slot, zero.name]
+        @@stack -= 1
+        ops
       when Appli === @left
         ops = @left.putter(slot)
         ops << [:right, slot, @right.name]

@@ -34,8 +34,6 @@ class Slot
   end
 
   def to_s
-    s = field.to_s
-    #s = field.to_s.gsub(/\[:/, "(").gsub(/\]/, ")").gsub(/, /, "").sub(/^\(/, "").sub(/\)$/, "")
-    return "#{slot_no}={#{vitality},#{s}}"
+    return "#{slot_no}={#{vitality},#{field}}"
   end
 end

@@ -44,7 +44,7 @@ class World
       begin
         @play_field.run(*(answer << opts))
       rescue NativeError => ex
-        $stderr.puts ex
+        log(ex.message)
       end
       @play_field.swap_players
       VM.zombies!(@play_field)

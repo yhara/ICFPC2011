@@ -39,8 +39,8 @@ class VM
       raise "lr value #{lr} is invalid"
     end
     if opts[:dump]
-      $stderr.puts play_field.opponent
-      $stderr.puts play_field.proponent
+      log("proponent: " + play_field.proponent.to_s)
+      log("oppnent: " + play_field.opponent.to_s)
     end
   end
   

@@ -2,8 +2,7 @@
 
 $: << File.join(File.dirname(__FILE__), "src/lib")
 
+# ログをファイルに書き込みながら実行
 ENV["yarunee_debug"] = "true"
-
 require "world"
-# playfieldの状態をlogしながら実行
-World.instance.run(ARGV.first, dump: true)
+World.instance.run(ARGV.first)

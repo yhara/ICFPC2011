@@ -147,11 +147,46 @@ end
 # 0スロットを生き返らせる
 class ReviveZero < Strategy
   def initialize
+    pf = World.instance.play_field
+    slot = nil
+    pf.myself.slots.each_with_index do |s, i|
+      next if i==0
+      if s.field == [:I]
+        slot = i
+        break
+      end
+    end
+    if slot.nil?
+      slot = 1
+      o "put", slot
+    end
+    o slot, "revive"
+    o slot, "zero"
   end
 end
 
 class ReviveSlot < Strategy
-  def initialize
+  # * slot_index - 復活させたいスロット
+  def initialize(slot_index)
+    pf = World.instance.play_field
+    if slot_index == 1
+      slot = 0
+      o "put", slot if pf.myself.slots[slot].field == [:I]
+      o slot, "revive"
+      o "K", slot
+      o "S", slot
+      o slot, "succ"
+      o slot, "zero"
+    else
+      slot = 1
+      o "put", slot if pf.myself.slots[slot].field == [:I]
+      make_num(0, slot_index)
+      o slot, "revive"
+      o "K", slot
+      o "S", slot
+      o slot, "get"
+      o slot, "zero"
+    end
   end
 end
 

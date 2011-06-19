@@ -28,8 +28,12 @@ class VM
     card = card == :zero ? 0 : [card]
     case lr
     when :left
+      raise NativeError, "card is :zero." if card == 0
+      raise LogicError, "card #{card} is invalid value." if card.is_a?(Fixnum)
       pslot(slot_no).field = evaluate(card, pslot(slot_no).field)
     when :right
+      f = pslot(slot_no).field
+      raise NativeError, "#{f} is fixnum." if f.is_a?(Fixnum)
       pslot(slot_no).field = evaluate(pslot(slot_no).field, card)
     else
       raise "lr value #{lr} is invalid"
@@ -125,6 +129,7 @@ class VM
   # alive. It raises an error if i is not a valid slot number or the
   # slot is dead.
   def self.get(i)
+    raise NativeError, "#{i} is not function." unless i.is_a?(Fixnum)
     raise NativeError, "#{pslot(i)} is dead." if pslot(i).dead?
     return pslot(i).field
   end

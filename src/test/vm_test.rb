@@ -68,6 +68,23 @@ class VMTest < Test::Unit::TestCase
     end
   end
 
+  def test_run_fail_with_apply_fixnum_to_card
+    VM.simulate(PlayField.new) do |vm|
+      vm.pslot(0).field = 10
+      assert_raise(NativeError) do
+        vm.run(:right, :I, 0)
+      end
+    end
+  end
+
+  def test_run_fail_with_apply_zero_to_field
+    VM.simulate(PlayField.new) do |vm|
+      assert_raise(NativeError) do
+        vm.run(:left, :zero, 0)
+      end
+    end
+  end
+
   def test_s_succ
     VM.simulate(PlayField.new) do |vm|
       (0..65534).each do |i|
@@ -159,6 +176,13 @@ class VMTest < Test::Unit::TestCase
         assert_equal [:I], vm.S3(0, 0, 0)
       end
       assert_equal 0, vm.play_field.apply_cnt
+    end
+  end
+
+  def test_K
+    VM.simulate(PlayField.new) do |vm|
+      assert_equal [:K2, [:I]], vm.K([:I])
+      assert_equal [:I], vm.K2([:I], [:I])
     end
   end
 

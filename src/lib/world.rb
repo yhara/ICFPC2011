@@ -31,16 +31,21 @@ class World
   def run(first_player_type)
     $stdout.sync = true
     $stdin.sync = true
+    $stderr.sync = true
     first_player = first_player_type == "0" ? :myself : :enemy
     @play_field = PlayField.new(first_player)
     loop {
-      if @play_field.my_turn?
-        answer = @solver.solve
-        answer_output(answer)
-      else
-        answer = get_enemy_answer
+        if @play_field.my_turn?
+          answer = @solver.solve
+          answer_output(answer)
+        else
+          answer = get_enemy_answer
+        end
+      begin
+        @play_field.run(*answer)
+      rescue NativeError => ex
+        $stderr.puts ex
       end
-      @play_field.run(*answer)
       @play_field.swap_players
       VM.zombies!(@play_field)
     }

@@ -29,6 +29,10 @@ class Strategy
     return @left_operations << [apply, card.to_sym, slot]
   end
 
+  def command(a, b, c)
+    o(b, c)
+  end
+
   # スロット番号を生成する場合、2**nの位置を指定するとターン数を減らせる
   def make_num(slot, num)
     o "put", slot
@@ -55,6 +59,25 @@ class Strategy
     o "S", slot      # s: S(K(card))
     o slot, "get"    # s: S(K(card))(get)
     o slot, "zero"   # s: S(K(card))(get)(zero) => card(i)
+  end
+  
+  # スロットtoの関数をスロットfromに適用する
+  # 結果はtoに保存される
+  # つまり
+  #     f[to] = to(from)
+  # 0はテンポラリとして破壊される
+  # 0を使うのは、適用したい関数を「get[zero]」で取り出せるようにするため
+  def bind_func(to, from)
+    make_num(0, from)  # 0: from
+    o "get", 0         # 0: get(from)
+                       #  = 引数にしたい関数
+  
+    o "K", to      # to: K[_]
+    o "S", to      # to: S[K[_]]
+    o to, "get"    # to: S[K[_]][get]
+    o to, "zero"   # to: S[K[_]][get][zero]
+                   #  = _( get(0) )
+                   #  = 適用したい関数( 引数にしたい関数 )
   end
 end
 
@@ -251,5 +274,73 @@ class ZombiePowder < Strategy
 
     # zombie powder!!!!!!!!!!!!!!1
     o use_slot, "zero"
+  end
+end
+
+class CopyZombie < Strategy
+  require_relative 'putter.rb'; include Putter
+  @@zombie_set = false
+  def initialize(target_slot=255)
+    unless @@zombie_set
+      help_for_zombie(2, 3, 4, 5, 6, 7)
+      make_num 5, 0
+      make_num 6, 1
+      make_num 7, 10000
+    end
+    zomie_powder(target: target_slot, func: 2, tmp: 3)
+    o "succ", 5
+    o "succ", 5
+    o "succ", 6
+    o "succ", 6
+  end
+
+  def set_lazy_copy(slot, tmp, param) 
+    make_num tmp, param     # tmp: 5
+    o "K", tmp              # tmp: K(5)
+
+    set slot, S[K[copy]]    # slot: S[K[copy]]
+    bind_func slot, tmp     # slot: S[K[copy][K(5)]]
+  end
+
+  def help_for_zombie(slot, tmp, tmp2, param1, param2, param3)
+    #  S[
+    #    S{ S[K(help)][ S(K(copy))(K(3)) ] }{ S(K(copy))(K(4)) }
+    #   ]
+    #   [  
+    #    S(K(copy))(K(5)) 
+    #   ]
+
+    set_lazy_copy tmp, tmp2, param1   # tmp: S(K(copy))(K(3))
+    set slot, S[K[help]]              # slot:   S[K[help]]
+    bind_func slot, tmp               # slot:   S[K[help]][ S(K(copy))(K(3)) ]
+    o "S", slot                       # slot: S{S[K[help]][ S(K(copy))(K(3)) ]}
+
+    set_lazy_copy tmp, tmp2, param2   # tmp: S(K(copy))(K(4))
+    bind_func slot, tmp               # slot:    S{S[K[help]][ S(K(copy))(K(3)) ]}{ S(K(copy))(K(4)) }
+    o "S", slot                       # slot: S[ S{S[K[help]][ S(K(copy))(K(3)) ]}{ S(K(copy))(K(4)) } ]
+
+    set_lazy_copy tmp, tmp2, param3   # tmp: S(K(copy))(K(5))
+    bind_func slot, tmp               # slot: S[ ... ][ S(K(copy))(K(5)) ]
+  end
+
+  def inc_for_zombie(slot, tmp, param1=3)
+    make_num param1, 77
+
+    make_num(slot, param1) # slot: 3
+    o "K", slot            # slot: K(3)
+
+    set tmp, S[K[copy]]    # tmp: S[K[copy]]
+    bind_func tmp, slot    # tmp: S[K[copy][K(3)]]
+
+    set slot, S[K[inc]]    # slot: S[K[inc]]
+    bind_func slot, tmp    # slot: S[K[inc]][ S[K[copy]][K(3)] ]
+  end
+
+  def zomie_powder(opts) # opts = :func, :target, :tmp
+    tmp = opts[:tmp]
+    o "put", tmp
+    o tmp, "zombie"        # 2: zombie
+    bind tmp, (255 - opts[:target])  # 2: zombie(target_slot)
+    bind_func tmp, opts[:func]
   end
 end

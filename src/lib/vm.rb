@@ -42,6 +42,9 @@ class VM
       end
     rescue NativeError => e
       log("適用中にエラーが発生しました。fieldをIにリセットします。 例外=<#{e}> slot_no=<#{slot_no}> slot=<#{slot}>")
+      e.backtrace.each do |l|
+        log("  #{l}")
+      end
       slot.field = [:I]
     end
     if opts[:dump]

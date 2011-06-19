@@ -26,7 +26,7 @@ class Strategy
       card = arg2
       slot = arg1
     end
-    return @left_operations << [apply, arg1, arg2]
+    return @left_operations << [apply, card, slot]
   end
 
   # スロット番号を生成する場合、2**nの位置を指定するとターン数を減らせる

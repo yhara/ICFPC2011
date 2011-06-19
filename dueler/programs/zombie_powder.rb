@@ -4,6 +4,7 @@ require_relative "helper"
 
 # 1: S(K(help(1)(2)))(K(16384))
 def help_for_zombie(i, j)
+  o "put", 1
   o 1, "help"                          # 1: help
   bind(1, i)                           # 1: help(i)
   bind(1, j)                           # 1: help(i)(j)
@@ -14,6 +15,7 @@ end
 
 # 1: S(K(attack(1)(2)))(K(16384))
 def attack_for_zombie(i, j)
+  o "put", 1
   o 1, "attack"                        # 1: attack
   bind(1, i)                           # 1: attack(i)
   bind(1, j)                           # 1: attack(i)(j)
@@ -25,6 +27,7 @@ end
 # 送り込むzomibeを準備
 # 2: S(K(S(zombie(target_slot))(get)))(succ)(zero)
 def zomie_powder(target_slot)
+  o "put", 2
   o 2, "zombie"        # 2: zombie
   bind(2, target_slot) # 2: zombie(target_slot)
   o "K", 2             # 2: S(zombie(target_slot))
@@ -36,6 +39,7 @@ def zomie_powder(target_slot)
 
   # zobie powder!!!!!!!!!!!!!!!!!!!!
   o 2, "zero"          # s: S(K(S(zombie(target_slot))(get)))(succ)(zero)
+  o 2, "zero"
 end
 
 # [:I]を受け取ったときに強力なhelp or attackを呼び出したい
@@ -61,8 +65,14 @@ def attack(i, j, n)
   bind(1, n)    # 1: attack(i)(j)(n)
 end
 
-# 最短のケース。52ターンで攻撃可能。
+# 255スロットを確実にぶっ殺す
 attack(128, 0, 9000)
 attack(129, 0, 9000)
-help_for_zombie(1, 2)
-zomie_powder(0)
+
+# 最短のケース。52ターンで攻撃可能。
+slot1 = 10
+target = 1
+target.step(2550, 2) do |i|
+  help_for_zombie(i, i+1)
+  zomie_powder(0)
+end

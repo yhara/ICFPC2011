@@ -2,9 +2,7 @@
 
 === Requirements
 
-* Ruby interpreter (tested on <TODO!>).
-* (sudo gem1.8 install rainbow)
-
+* Ruby interpreter (ruby1.9.1).
 
 === Running
 

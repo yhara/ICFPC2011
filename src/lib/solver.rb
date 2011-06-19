@@ -38,6 +38,10 @@ class Solver
       return ReviveSlot, my_dead_slot.slot_no
     end
 
+    if World.instance.play_field.enemy.slots[255].vitality == 1
+      return KillEnemy255
+    end
+
     enemy_dead_slot = World.instance.play_field.enemy.slots.detect { |slot|
       slot.vitality <= 0
     }

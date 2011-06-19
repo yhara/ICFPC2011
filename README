@@ -5,19 +5,50 @@
 * Ruby interpreter (tested on <TODO!>).
 * (sudo gem1.8 install rainbow)
 
+
 === Running
 
 
+== Team name
 
-== Credits
+yarunee
 
-* Yutaka Hara <yhara AT netlab.jp>
-* Narihiro Nakamura <narihiro AT netlab.jp>
-* Akihiro Sada <sada AT netlab.jp>
-* Kouji Takao <kouji AT netlab.jp>
-* Tor Bechmann Yamamoto-Sorensen <tor AT netlab.jp>
-* Kumojima Kenta <kumojima AT netlab.jp>
-* Yuya Nishida <yuya AT netlab.jp>
+
+== Contact e-mail address
+
+2011@yarunee.nacl.ml.j96.org
+
+
+== URL of your submission 
+
+
+== SHA-512 hash value of your submission
+
+
+== Real names, affilications, and countries of all team members * No handles, please.
+
+Yutaka Hara, NaCl, Japan
+Narihiro Nakamura, NaCl, Japan
+Akihiro Sada, NaCl, Japan
+Kouji Takao, NaCl, Japan
+Tor Bechmann Yamamoto-Sorensen, NaCl, Danmark
+Kumojima Kenta, NaCl, Japan
+Yuya Nishida, NaCl, Japan
+Yuuki Morohoshi, NaCl, Japan
+
+
+== Team's language (optional)
+
+Team's language is Ruby.
+
+
+== Team's Web page
+
+
+== Any other comments
+
+Yarunee!! :)
+
 
 # Editor settings
 # - Emacs -

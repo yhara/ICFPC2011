@@ -54,7 +54,7 @@ class World
       VM.zombies!(@play_field)
     }
   rescue Exception => e
-    log("決闘中にエラーが発生しました。スリープモードに入ります。 例外=<#{e}>")
+    log("決闘中にエラーが発生しました。スリープモードに入ります。 例外クラス=<#{e.inspect}> メッセージ=<#{e}>")
     e.backtrace.each do |l|
       log("  #{l}")
     end

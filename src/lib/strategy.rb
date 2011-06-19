@@ -286,6 +286,7 @@ class CopyZombie < Strategy
       make_num 5, 0
       make_num 6, 1
       make_num 7, 10000
+      @@zombie_set = true
     end
     zomie_powder(target: target_slot, func: 2, tmp: 3)
     o "succ", 5

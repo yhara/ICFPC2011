@@ -1,8 +1,26 @@
 # -*- coding: utf-8 -*-
+$stdout.sync = true
+
+def read
+  case $stdin.gets
+  when "1\n"
+    card = $stdin.gets
+    slot = $stdin.gets
+  when "2\n"
+    slot = $stdin.gets
+    card = $stdin.gets
+  else
+    exit
+  end
+end
+
+read if ARGV[0] == "1"
+
 def command(a, b, c)
   puts a
   puts b
   puts c
+  read
 end
 
 def o(arg1, arg2)

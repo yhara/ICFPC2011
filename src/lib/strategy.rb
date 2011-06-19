@@ -85,7 +85,16 @@ class AttackTiredEnemy < Strategy
     tmp_slot_index = 1
     # TODO: min_enemy_slotを超える必要はない
     # TODO: 2のn乗にまるめるのが効率いい
-    damage = max_my_slot.vitality - 1
+    ideal_damage  = (min_enemy_slot.vitality / 0.9).floor + 1 
+    if ideal_damage < max_my_slot.vitality
+      damage = ideal_damage
+    elsif max_my_slot.vitality > 8192
+      damage = 8192
+    elsif max_my_slot.vitality > 4096
+      damage = 4096
+    else
+      damage = max_my_slot.vitality / 2
+    end
 
     # @conditionsには，一致する戦略かどうかを判定するための情報を含める．
     # AttackTiredEnemyの場合は操作を生成するための

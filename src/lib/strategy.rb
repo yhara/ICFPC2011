@@ -106,7 +106,7 @@ class AttackTiredEnemy < Strategy
   # numをslotに設定する
   def set_constant(num, slot)
     result = []
-    result << [:left, :zero, slot]
+    result << [:left, :put, slot]
     bin = []
     while num > 0
       num, r = num.divmod(2)

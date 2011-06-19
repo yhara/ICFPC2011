@@ -19,8 +19,11 @@ class Capture
   attr_reader :ary
 
   def o(arg1, arg2)
-    apply = arg1.class == String ? :left : :right
-    ary << [apply, arg1, arg2]
+    if arg1.class == String
+      ary << [:left, arg1.to_sym, arg2]
+    else
+      ary << [:right, arg2.to_sym, arg1]
+    end
   end
 end
 
@@ -66,9 +69,9 @@ o slot1, "zero"
 #                      ( I(0) )
 #                      ( 0 )
 #
-o 255, "zero"
+o 255, "zero" # 出力確認のために追加
 
 }
 end
 
-p loop_dec(10, 11)
+p loop_dec(:tmp_slot_1, :tmp_slot_2)

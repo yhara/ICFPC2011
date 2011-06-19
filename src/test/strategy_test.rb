@@ -4,6 +4,6 @@ require "strategy"
 
 class StrategyTest < Test::Unit::TestCase
   def test_zombie_powder
-    ZombiePowder.new.left_operations
+    ZombiePowder.new(255).left_operations
   end
 end

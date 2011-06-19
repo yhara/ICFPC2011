@@ -67,17 +67,6 @@ class NilStrategy < Strategy
   end
 end
 
-# 0スロットを生き返らせる
-class ReviveZero < Strategy
-  def initialize
-  end
-end
-
-class ReviveSlot < Strategy
-  def initialize
-  end
-end
-
 # 一番体力が弱い相手へ攻撃
 class AttackTiredEnemy < Strategy
   def initialize
@@ -157,17 +146,32 @@ class AttackTiredEnemy < Strategy
   end
 end
 
+# 0スロットを生き返らせる
+class ReviveZero < Strategy
+  def initialize
+  end
+end
+
+class ReviveSlot < Strategy
+  def initialize
+  end
+end
+
 # ゾンビを送り込む
 class ZombiePowder < Strategy
-  def initialize
+  def initialize(dead_slot_no)
     pf = World.instance.play_field
-    sirial_help_for_zombie(1, 0, 1, 1)
-    zombie_powder(5, 1)
+    h_index = rand(127)+1
+    fs, ss = take_max_slots(h_index, pf.enemy.slots)
+    sirial_help_for_zombie(h_index, fs.slot_no, ss.slot_no, fs.vitality)
+    z_index = rand(127)+1
+    loop{ z_index = rand(127)+1 } if z_index == h_index
+    zombie_powder(z_index, dead_slot_no)
   end
 
   def sirial_help_for_zombie(s, i, j, v)
-    o("put", s)
-    o(s, "help")                         # 1: help
+    o "put", s
+    o s, "help"                          # 1: help
     bind(s, i)                           # 1: help(i)
     bind(s, j)                           # 1: help(i)(j)
     o "K", s                             # 1: K(help(i)(j))

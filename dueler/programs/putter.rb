@@ -1,19 +1,4 @@
-require 'pp'
-
-=begin
-任意の関数をフィールドに置くことを考える。
-
-例
-    C    まずCを置いたとして
-        -> [:right, 0, C]
-    C[D] 右に付ける場合はこう
-        -> [:left, C, 0]
-  D[C]   左に付ける場合はこう
-        -> [:right, 0, D]
-
-=end
-
-class Putter
+module Putter
   class FuncName
     def initialize(name)
       @name = name
@@ -71,30 +56,31 @@ class Putter
     end
   end
 
-  [:S, :K].each do |name|
+  [:S, :K, :I].each do |name|
     const_set(name, FuncName.new(name))
   end
-  [:get, :succ].each do |name|
+  [:zero, :succ, :dbl, :get, :put, :inc, :dec, :attack,
+    :help, :copy, :revive, :zombie].each do |name|
     define_method(name){
       return FuncName.new(name)
     }
   end
 
-  def self.build(slot, &block)
-    new(slot, &block).result
+  def set(slot, tree)
+    tree.putter(slot).each do |a, b, c|
+      command ((a==:left) ? "1" : "2"), b, c
+    end
   end
-
-  def initialize(slot, &block)
-    tree = instance_eval(&block)
-    @result = tree.putter(slot)
-  end
-  attr_reader :result
 end
 
-#Putter.build{
-#  get
-#}
+if $0==__FILE__
+  include Putter
 
-p Putter.build(0){
-  S[K[S[K[S[get]]][get]]][succ]
-}
+  def command(a, b, c)
+    puts a
+    puts b
+    puts c
+  end
+
+  set 0, S[K[S[K[S[get]]][get]]][succ]
+end

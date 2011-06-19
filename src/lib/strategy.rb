@@ -11,6 +11,10 @@ class Strategy
     return @left_operations.shift
   end
 
+  def take_max_slots(take, myself_or_enemy)
+    return myself_or_enemy.sort_by{|slot| -slot.vitality }.take(take)
+  end
+
   def o(arg1, arg2)
     @left_operations ||= []
     if arg1.class == String || arg1.class == Symbol

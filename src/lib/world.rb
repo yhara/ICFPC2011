@@ -28,7 +28,7 @@ class World
   end
 
   # 実行
-  def run(first_player_type)
+  def run(first_player_type, opts={})
     $stdout.sync = true
     $stdin.sync = true
     $stderr.sync = true
@@ -42,7 +42,7 @@ class World
           answer = get_enemy_answer
         end
       begin
-        @play_field.run(*answer)
+        @play_field.run(*(answer << opts))
       rescue NativeError => ex
         $stderr.puts ex
       end

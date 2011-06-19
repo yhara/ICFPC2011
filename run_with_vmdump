@@ -1,0 +1,7 @@
+#!/usr/bin/ruby1.9.1
+
+$: << File.join(File.dirname(__FILE__), "src/lib")
+
+require "world"
+# playfieldの状態をstderrにダンプしながら実行
+World.instance.run(ARGV.first, dump: true)

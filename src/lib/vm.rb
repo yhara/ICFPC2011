@@ -38,7 +38,10 @@ class VM
     else
       raise "lr value #{lr} is invalid"
     end
-    puts play_field.opponent if opts[:dump]
+    if opts[:dump]
+      $stderr.puts play_field.opponent
+      $stderr.puts play_field.proponent
+    end
   end
   
   # proponentのスロットのうち、ゾンビのものについて以下の処理を行う。

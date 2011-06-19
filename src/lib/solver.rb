@@ -8,9 +8,6 @@ class Solver
   end
 
   def solve
-    # 以下のreturnを外すと順にこちらのスロットを使って
-    # 相手のスロットを攻撃するコードが走る
-
     if @left_operations.length > 1
       return @left_operations.shift
     end

@@ -27,7 +27,7 @@ class Solver
 
   def select_strategy_class
     if World.instance.play_field.myself.slots[0].vitality <= 0
-      return ZeroRevive
+      return ReviveZero
     end
 
     my_dead_slot = World.instance.play_field.myself.slots.detect { |slot|

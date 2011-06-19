@@ -192,6 +192,7 @@ end
 
 # ゾンビを送り込む
 class ZombiePowder < Strategy
+  @@zombie_evac_count = 0
   def initialize(dead_slot_no=255)
     pf = World.instance.play_field
 
@@ -203,7 +204,14 @@ class ZombiePowder < Strategy
     # zombie置き場もランダム。対象は引数からもらう。
     z_index = rand(127)+1
     loop{ z_index = rand(127)+1 } if z_index == h_index
+
+    # 十回に一度はフィールドを持っているslotを狙う
+    if (@@zombie_evac_count % 10) == 0
+      s = pf.enemy.slots.map{|s| s if s.field != [:I]}.sample(1).first
+      dead_slot_no = s unless s.nil?
+    end
     zombie_powder(z_index, dead_slot_no, h_index)
+    @@zombie_evac_count += 1
   end
 
   def sirial_help_for_zombie(s, i, j, v)
@@ -221,7 +229,7 @@ class ZombiePowder < Strategy
   def zombie_powder(use_slot, target_slot, h_index)
     o "put", use_slot
     o use_slot, "zombie"            # 2: zombie
-    bind(use_slot, target_slot-255) # 2: zombie(target_slot)
+    bind(use_slot, 255-target_slot) # 2: zombie(target_slot)
     o "K", use_slot                 # 2: S(zombie(target_slot))
     o "S", use_slot                 # 2: S(K(zombie(target_slot))))
     o use_slot, "get"               # 2: S(K(zombie(target_slot)))(get)

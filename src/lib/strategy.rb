@@ -20,12 +20,12 @@ class Strategy
       card = arg2
       slot = arg1
     end
-    return [apply, arg1, arg2]
+    return @left_operations << [apply, arg1, arg2]
   end
 
   # スロット番号を生成する場合、2**nの位置を指定するとターン数を減らせる
   def make_num(slot, num)
-    o "put", slot 
+    o "put", slot
     bin = []
     while num > 0
       num, r = num.divmod(2)

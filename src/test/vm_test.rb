@@ -134,8 +134,15 @@ class VMTest < Test::Unit::TestCase
       vm.pslot(0).field = 0
       assert_equal 0, vm.get(0)
       assert_equal [:I], vm.get(255)
-      assert_raise(IndexNativeError) do
-        vm.get(256)
+      [256, 32767, 32768, 65535].each do |arg|
+        assert_raise(IndexNativeError) do
+          vm.get(arg)
+        end
+      end
+      [[:I], [:put, [:I]]].each do |arg|
+        assert_raise(NativeError, IndexNativeError) do
+          vm.get(arg)
+        end
       end
       vm.pslot(0).vitality = 0
       assert_raise(NativeError) do

@@ -132,7 +132,7 @@ class VM
   # alive. It raises an error if i is not a valid slot number or the
   # slot is dead.
   def self.get(i)
-    raise NativeError, "#{i} is not function." unless i.is_a?(Fixnum)
+    raise NativeError, "i is not integer. i=<#{i}>" if !i.is_a?(Fixnum)
     raise NativeError, "#{pslot(i)} is dead." if pslot(i).dead?
     return pslot(i).field
   end

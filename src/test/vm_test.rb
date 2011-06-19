@@ -15,28 +15,39 @@ class VMTest < Test::Unit::TestCase
   end
 
   def test_example2
+    apps = [
+            [:right, :help, 0],
+            [:right, :zero, 0],
+            [:left, :K, 0],
+            [:left, :S, 0],
+            [:right, :succ, 0],
+            [:right, :zero, 0],
+            [:right, :zero, 1],
+            [:left, :succ, 1],
+            [:left, :dbl, 1],
+            [:left, :dbl, 1],
+            [:left, :dbl, 1],
+            [:left, :dbl, 1],
+            [:left, :K, 0],
+            [:left, :S, 0],
+            [:right, :get, 0],
+            [:left, :K, 0],
+            [:left, :S, 0],
+            [:right, :succ, 0],
+            [:right, :zero, 0],
+           ]
     VM.simulate(PlayField.new) do |vm|
-      vm.run(:right, :help, 0)
-      vm.run(:right, :zero, 0)
-      vm.run(:left, :K, 0)
-      vm.run(:left, :S, 0)
-      vm.run(:right, :succ, 0)
-      vm.run(:right, :zero, 0)
-      vm.run(:right, :zero, 1)
-      vm.run(:left, :succ, 1)
-      vm.run(:left, :dbl, 1)
-      vm.run(:left, :dbl, 1)
-      vm.run(:left, :dbl, 1)
-      vm.run(:left, :dbl, 1)
-      vm.run(:left, :K, 0)
-      vm.run(:left, :S, 0)
-      vm.run(:right, :get, 0)
-      vm.run(:left, :K, 0)
-      vm.run(:left, :S, 0)
-      vm.run(:right, :succ, 0)
-      vm.run(:right, :zero, 0)
-      assert_equal [:I], vm.pslot(0).field
-      assert_equal 16, vm.pslot(1).field
+      apps.each do |app|
+        vm.run(*app)
+        vm.play_field.swap_players
+        vm.zombies!(vm.play_field)
+
+        # 相手は何もしないことを想定。
+        vm.play_field.swap_players
+        vm.zombies!(vm.play_field)
+      end
+      assert_equal([:I], vm.pslot(0).field)
+      assert_equal(16, vm.pslot(1).field)
     end
   end
   

@@ -91,17 +91,11 @@ class VM
     if play_field.apply_cnt > 1000
       raise ApplicationLimitNativeError, "apply_cnt exceeded 1000."
     end
-    optimize!(value)
     return nil if value.empty?
     return value[0] if value[0].is_a?(Fixnum)
     # カリー化している引数があればそれも渡す
     args = (value[1..-1] + [arg]).compact
     return self.send(value[0], *args)
-  end
-
-  # TODO
-  def self.optimize!(value)
-    return value
   end
 
   def self.output

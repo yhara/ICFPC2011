@@ -12,7 +12,7 @@ class Strategy
   end
 
   def take_max_slots(take, myself_or_enemy)
-    return myself_or_enemy.sort_by{|slot| -slot.vitality }.take(take)
+    return myself_or_enemy.sort_by{|slot| [-slot.vitality, -slot.slot_no] }.take(take)
   end
 
   def o(arg1, arg2)
@@ -26,7 +26,7 @@ class Strategy
       card = arg2
       slot = arg1
     end
-    return @left_operations << [apply, card, slot]
+    return @left_operations << [apply, card.to_sym, slot]
   end
 
   # スロット番号を生成する場合、2**nの位置を指定するとターン数を減らせる
@@ -76,15 +76,25 @@ class AttackTiredEnemy < Strategy
       |slot, i|
       [slot.vitality, -i]
     }
-    max_my_slot, max_my_slot_index =
-      pf.myself.slots.to_a[World::NUM_SLOTS / 2 ... pf.myself.slots.length].each_with_index.max_by {
-      |slot, i|
-      [slot.vitality, -i]
+    max_my_slot =
+      pf.myself.slots.to_a[World::NUM_SLOTS / 2 ... pf.myself.slots.length].max_by {
+      |slot|
+      [slot.vitality, -slot.slot_no]
     }
+    max_my_slot_index = max_my_slot.slot_no
     tmp_slot_index = 1
     # TODO: min_enemy_slotを超える必要はない
     # TODO: 2のn乗にまるめるのが効率いい
-    damage = max_my_slot.vitality - 1
+    ideal_damage  = (min_enemy_slot.vitality / 0.9).floor + 1 
+    if ideal_damage < max_my_slot.vitality
+      damage = ideal_damage
+    elsif max_my_slot.vitality > 8192
+      damage = 8192
+    elsif max_my_slot.vitality > 4096
+      damage = 4096
+    else
+      damage = max_my_slot.vitality / 2
+    end
 
     # @conditionsには，一致する戦略かどうかを判定するための情報を含める．
     # AttackTiredEnemyの場合は操作を生成するための
@@ -123,24 +133,11 @@ class AttackTiredEnemy < Strategy
   # World::NUM_SLOTS-j攻撃対象のインデックス
   # n犠牲にする体力
   def attack(slot, i, j, n)
-    result = []
-    result << [:right, :attack, slot]
-    result << [:left, :K, slot]
-    result << [:left, :S, slot]
-    result << [:right, :get, slot]
-    result.concat(set_constant(i, 0))
-    result << [:right, :zero, slot]
-    result << [:left, :K, slot]
-    result << [:left, :S, slot]
-    result << [:right, :get, slot]
-    result.concat(set_constant(j, 0))
-    result << [:right, :zero, slot]
-    result << [:left, :K, slot]
-    result << [:left, :S, slot]
-    result << [:right, :get, slot]
-    result.concat(set_constant(n, 0))
-    result << [:right, :zero, slot]
-    return result
+    o "put", slot
+    o slot, "attack" # 1: attack
+    bind(slot, i)    # 1: attack(i)
+    bind(slot, j)    # 1: attack(i)(j)
+    bind(slot, n)    # 1: attack(i)(j)(n)
   end
 end
 
@@ -198,12 +195,18 @@ class ZombiePowder < Strategy
 
     # 相手フィールドの元気な2つを攻撃。help置き場はランダム。
     h_index = rand(127)+1
-    fs, ss = take_max_slots(h_index, pf.enemy.slots)
+    fs, ss = take_max_slots(2, pf.enemy.slots)
     sirial_help_for_zombie(h_index, fs.slot_no, ss.slot_no, fs.vitality)
 
     # zombie置き場もランダム。対象は引数からもらう。
     z_index = rand(127)+1
-    loop{ z_index = rand(127)+1 } if z_index == h_index
+    loop{
+      if z_index == h_index
+        z_index = rand(127)+1
+      else
+        break
+      end
+    }
 
     # 十回に一度はフィールドを持っているslotを狙う
     if (@@zombie_evac_count % 10) == 0

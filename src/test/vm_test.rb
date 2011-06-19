@@ -97,8 +97,20 @@ class VMTest < Test::Unit::TestCase
     end
   end
 
-  # 現状は無限ループになるためコメントアウト。
-  # apply_cntのチェックが入れば問題なくなる。
+  # 適用が1000回を越えるとエラーを発生する。
+  def test_s_evaluate__apply_cnt_exceeded_limit
+    VM.simulate(PlayField.new) do |vm|
+      1000.times do
+        vm.evaluate([:I], 0)
+      end
+      assert_equal(1000, vm.play_field.apply_cnt)
+      assert_raise(ApplicationLimitNativeError) do
+        vm.evaluate([:I], 0)
+      end
+      assert_equal(1001, vm.play_field.apply_cnt)
+    end
+  end
+
   def test_loop_dec2
     apps = [
             [:right, :get, 0],

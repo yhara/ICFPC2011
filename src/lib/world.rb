@@ -55,6 +55,9 @@ class World
     }
   rescue Exception => e
     log("決闘中にエラーが発生しました。スリープモードに入ります。 例外=<#{e}>")
+    e.backtrace.each do |l|
+      log("  #{l}")
+    end
     sleep
   end
 

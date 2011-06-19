@@ -53,6 +53,9 @@ class World
       @play_field.swap_players
       VM.zombies!(@play_field)
     }
+  rescue Exception => e
+    log("決闘中にエラーが発生しました。スリープモードに入ります。 例外=<#{e}>")
+    sleep
   end
 
   private

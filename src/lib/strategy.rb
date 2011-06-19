@@ -2,14 +2,6 @@ class Strategy
   attr_reader :conditions
 
   def n_left_operations
-    raise "!"
-  end
-
-  def next_operation
-    raise "!"
-  end
-
-  def n_left_operations
     return @left_operations.length
   end
 

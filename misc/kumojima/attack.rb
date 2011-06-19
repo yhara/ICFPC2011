@@ -36,14 +36,14 @@ end
 
 def attack(i, j, n)
   slot = 1
-  command 2, slot, "attack"
-  command 1, "K", slot
-  command 1, "S", slot
-  command 2, slot, "get"
-  set_constant(i, 0)
-  command 2, slot, "zero"
-  command 1, "K", slot
-  command 1, "S", slot
+  command 2, slot, "attack" # 1: attack
+  command 1, "K", slot      # 1: K(attack)
+  command 1, "S", slot      # 1: S(K(attack))
+  command 2, slot, "get"    # 1: S(K(attack))(get)
+  set_constant(i, 0)        # 0: 100 = i
+  command 2, slot, "zero"   # 0: S(K(attack))(get)(zero) => attack(100)
+  command 1, "K", slot      # 0: K(attack(100))
+  command 1, "S", slot      # 0: S(K(attack(100)))
   command 2, slot, "get"
   set_constant(j, 0)
   command 2, slot, "zero"

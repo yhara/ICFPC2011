@@ -544,20 +544,26 @@ class VMTest < Test::Unit::TestCase
     end
   end
 
+  def _test_do_nothing_vs_do_nothing__simulate
+    VM.simulate(PlayField.new) do |vm|
+      simulate(vm, "do_nothing_vs_do_nothing.csv")
+      256.times do |i|
+        assert(vm.pslot(i).alived?)
+        assert(vm.oslot(i).alived?)
+        assert_equal([:I], vm.pslot(i).field)
+        assert_equal([:I], vm.oslot(i).field)
+      end
+      assert_equal(100000, vm.play_field.turn)
+    end
+  end
+
   def test_zombie_powder2_vs_do_nothing__simulate
     VM.simulate(PlayField.new) do |vm|
       simulate(vm, "zombie_powder2_vs_do_nothing.csv")
-
-      p_alive = 0
-      o_alive = 0
-      (0..255).each do |i|
-        p_alive += 1 if vm.pslot(i).alived?
+      256.times do |i|
+        assert(vm.pslot(i).alived?)
+        assert(vm.oslot(i).dead?)
       end
-      (0..255).each do |i|
-        o_alive += 1 if vm.oslot(i).alived?
-      end
-      assert_equal(256, p_alive)
-      assert_equal(0, o_alive)
       assert_equal(10717, vm.play_field.turn)
     end
   end

@@ -11,34 +11,25 @@ def o(arg1, arg2)
 end
 
 # スロット番号を生成する場合、2**nの位置を指定するとターン数を減らせる
-def make_about_num(slot, num, options={})
-  o slot, "zero" # => 0
-  return if num == 0
-  o "succ", slot # => 1
-  dbl_cnt = Math::log2(num).to_i
-  dbl_cnt.times do
-    o "dbl", slot
+def make_num(slot, num)
+  o "put", slot 
+  bin = []
+  while num > 0
+    num, r = num.divmod(2)
+    bin << r
   end
-  # スロット番号を生成する場合は精度を高める。
-  if num < 255
-    succ_cnt = num - (1 << dbl_cnt)
-    succ_cnt.times do
-      o "succ", slot
-    end
-  else
-    # :lowerが指定されなければ上にする
-    unless options[:lower]
-      o "dbl", slot
-    end
-  end
+  o slot, "zero"
+  while i=bin.pop
+    o "succ", slot if i==1
+    o "dbl",  slot unless bin.empty?
+ end
 end
 
 # 指定するスロットのcardの引数に指定した数値をbindする
 # TODO: スロットが死んだらreviveしなければならない
-# :lower optionを指定できる
 def bind(slot, num, options={})
   o "put", 0
-  make_about_num(0, num, options)
+  make_num(0, num)
   options[:apply_to_zero] ||= []
   options[:apply_to_zero].each do |card|
     o card, 0

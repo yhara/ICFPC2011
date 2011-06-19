@@ -12,7 +12,7 @@ class Strategy
   end
 
   def take_max_slots(take, myself_or_enemy)
-    return myself_or_enemy.sort_by{|slot| -slot.vitality }.take(take)
+    return myself_or_enemy.sort_by{|slot| [-slot.vitality, -slot.slot_no] }.take(take)
   end
 
   def o(arg1, arg2)
@@ -200,7 +200,13 @@ class ZombiePowder < Strategy
 
     # zombie置き場もランダム。対象は引数からもらう。
     z_index = rand(127)+1
-    loop{ z_index = rand(127)+1 } if z_index == h_index
+    loop{
+      if z_index == h_index
+        z_index = rand(127)+1
+      else
+        break
+      end
+    }
 
     # 十回に一度はフィールドを持っているslotを狙う
     if (@@zombie_evac_count % 10) == 0

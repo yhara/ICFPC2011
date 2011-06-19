@@ -274,9 +274,28 @@ class VM
   end
 
   def self.help3(i, j, n)
+    raise NativeError, "#{n} is not fixnum." unless n.is_a?(Fixnum)
+    raise NativeError, "#{n} is greater than pslot(#{i}).vitality:#{pslot(i).vitality}." if n > pslot(i).vitality
     pslot(i).vitality -= n
-    pslot(j).vitality += n * 11 / 10
-    return [:I]
+    if @@processing_zombies 
+      if pslot(j).alived?
+        if (pslot(j).vitality - (n * 11 / 10)) <= 0
+          pslot(j).vitality = 0
+        else
+          pslot(j).vitality -= n * 11 / 10
+        end
+      end
+      return [:I]
+    else
+      if pslot(j).alived?
+        if (pslot(j).vitality + (n * 11 / 10)) >= 65535
+          pslot(j).vitality = 65535
+        else
+          pslot(j).vitality += n * 11 / 10
+        end
+      end
+      return [:I]
+    end
   end
 
   # Card "copy" is a function that takes an argument i, and returns

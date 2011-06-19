@@ -181,8 +181,41 @@ class VMTest < Test::Unit::TestCase
 
   def test_K
     VM.simulate(PlayField.new) do |vm|
-      assert_equal [:K2, [:I]], vm.K([:I])
-      assert_equal [:I], vm.K2([:I], [:I])
+      assert_equal([:K2, [:I]], vm.K([:I]))
+      assert_equal([:I], vm.K2([:I], [:I]))
+    end
+  end
+
+  def test_help
+    VM.simulate(PlayField.new) do |vm|
+      assert_raise(NativeError) { vm.help3(0, 1, [:I]) }
+      vm.pslot(0).vitality = 1
+      assert_raise(NativeError) { vm.help3(0, 1, 2) }
+
+      vm.pslot(0).vitality = 10000
+      assert_equal([:help2, [:I]], vm.help([:I]))
+      assert_equal([:help3, 0, 1], vm.help2(0, 1))
+      assert_equal([:I], vm.help3(0, 1, 1))
+      assert_equal(9999,  vm.pslot(0).vitality)
+      assert_equal(10001, vm.pslot(1).vitality)
+      vm.pslot(0).vitality = 10000
+      vm.pslot(1).vitality = 65535
+      assert_equal([:I], vm.help3(0, 1, 1))
+      assert_equal(9999, vm.pslot(0).vitality)
+      assert_equal(65535, vm.pslot(1).vitality)
+      
+      vm.processing_zombies = true
+      vm.pslot(0).vitality = 10000
+      vm.pslot(1).vitality = 10000
+      assert_equal([:I], vm.help3(0, 1, 1))
+      assert_equal(9999, vm.pslot(0).vitality)
+      assert_equal(9999, vm.pslot(1).vitality)
+      vm.pslot(0).vitality = 10000
+      vm.pslot(1).vitality = 0
+      assert_equal([:I], vm.help3(0, 1, 1))
+      assert_equal(9999, vm.pslot(0).vitality)
+      assert_equal(0,    vm.pslot(1).vitality)
+      vm.processing_zombies = false
     end
   end
 

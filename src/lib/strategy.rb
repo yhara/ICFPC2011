@@ -195,7 +195,7 @@ class ZombiePowder < Strategy
 
     # 相手フィールドの元気な2つを攻撃。help置き場はランダム。
     h_index = rand(127)+1
-    fs, ss = take_max_slots(h_index, pf.enemy.slots)
+    fs, ss = take_max_slots(2, pf.enemy.slots)
     sirial_help_for_zombie(h_index, fs.slot_no, ss.slot_no, fs.vitality)
 
     # zombie置き場もランダム。対象は引数からもらう。

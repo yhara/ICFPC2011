@@ -1,24 +1,30 @@
+= yarunee
+
 == How to run
 
 === Requirements
 
 * Ruby interpreter (tested on ruby1.9.1 <1.9.2.0-2>).
 
-== Team name
+== Information
+
+=== Team name
 
 yarunee
 
-== Contact e-mail address
+=== Contact e-mail address
 
 2011@yarunee.nacl.ml.j96.org
 
-== URL of your submission 
+=== URL of your submission 
 
+http://www.j96.org/icfpc-2011-20110620xxxx.tar.gz
 
-== SHA-512 hash value of your submission
+=== SHA-512 hash value of your submission
 
+<submit>
 
-== Real names, affilications, and countries of all team members * No handles, please.
+=== Real names, affilications, and countries of all team members * No handles, please.
 
 Yutaka Hara, NaCl, Japan
 Narihiro Nakamura, NaCl, Japan
@@ -29,18 +35,19 @@ Kumojima Kenta, NaCl, Japan
 Yuki Morohoshi, NaCl, Japan
 Yuya Nishida, NaCl, Japan
 
-== Team's language (optional)
+=== Team's language (optional)
 
 Team's language is Ruby.
 
+=== Team's Web page
 
-== Team's Web page
-
-
-== Any other comments
+=== Any other comments
 
 Yarunee!! :)
 
+== How to packaging
+
+  $ rake submission
 
 # Editor settings
 # - Emacs -

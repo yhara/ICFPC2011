@@ -58,7 +58,7 @@ module Putter
       case 
       when Appli === @left && Appli === @right
         @@stack += 1
-        $stderr.puts @@stack
+        #$stderr.puts @@stack
         ops = @left.putter(slot)
         ops.concat(@right.putter(@@stack))
         ops << [:left, K.name, slot]

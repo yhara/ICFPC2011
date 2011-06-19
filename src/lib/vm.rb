@@ -205,7 +205,7 @@ class VM
   def self.inc(i)
     raise NativeError, "#{i} is not fixnum." unless i.is_a?(Fixnum)
     if @@processing_zombies
-      pslot(i).vitality -= 1 if pslot(i).vitality > 0
+       pslot(i).vitality -= 1 if pslot(i).vitality > 0
     else
       pslot(i).vitality += 1 if pslot(i).vitality > 0 && pslot(i).vitality < 65535
     end

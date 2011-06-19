@@ -6,9 +6,20 @@ require "play_field"
 
 class VMTest < Test::Unit::TestCase
   def test_example1
+    apps = [
+            [:right, :inc, 0],
+            [:right, :zero, 0],
+           ]
     VM.simulate(PlayField.new) do |vm|
-      vm.run(:right, :inc, 0)
-      vm.run(:right, :zero, 0)
+      apps.each do |app|
+        vm.run(*app)
+        vm.play_field.swap_players
+        vm.zombies!(vm.play_field)
+
+        # 相手は何もしないことを想定。
+        vm.play_field.swap_players
+        vm.zombies!(vm.play_field)
+      end
       assert_equal [:I], VM.pslot(0).field
       assert_equal 10001, VM.pslot(0).vitality
     end
@@ -54,41 +65,69 @@ class VMTest < Test::Unit::TestCase
   # エラーが発生すると操作対象のスロットは[:I]になる。
   def test_s_run__error_1
     VM.simulate(PlayField.new) do |vm|
-      vm.run(:right, :attack, 0)
+      vm.run(*[:right, :attack, 0])
+      vm.play_field.swap_players
+      vm.zombies!(vm.play_field)
+      vm.play_field.swap_players
+      vm.zombies!(vm.play_field)
       assert_equal([:attack], vm.pslot(0).field)
-      vm.run(:left, :get, 0) # => get(attack) -> エラーが発生する。
+
+      vm.run(*[:left, :get, 0]) # => get(attack) -> エラーが発生する。
+      vm.play_field.swap_players
+      vm.zombies!(vm.play_field)
+      vm.play_field.swap_players
+      vm.zombies!(vm.play_field)
       assert_equal([:I], vm.pslot(0).field)
 
       vm.pslot(0).field = 10
-      vm.run(:right, :I, 0)
+      vm.run(*[:right, :I, 0])
+      vm.play_field.swap_players
+      vm.zombies!(vm.play_field)
+      vm.play_field.swap_players
+      vm.zombies!(vm.play_field)
       assert_equal([:I], vm.pslot(0).field)
 
       vm.pslot(0).field = 10
-      vm.run(:left, :zero, 0)
+      vm.run(*[:left, :zero, 0])
+      vm.play_field.swap_players
+      vm.zombies!(vm.play_field)
+      vm.play_field.swap_players
+      vm.zombies!(vm.play_field)
       assert_equal([:I], vm.pslot(0).field)
     end
   end
 
   # 現状は無限ループになるためコメントアウト。
   # apply_cntのチェックが入れば問題なくなる。
-  # def test_loop_dec2
-  #   VM.simulate(PlayField.new) do |vm|
-  #     vm.run(:right, :get, 0)
-  #     vm.run(:left, :S, 0)
-  #     vm.run(:right, :dec, 1)
-  #     vm.run(:left, :S, 1)
-  #     vm.run(:right, :I, 1)
-  #     vm.run(:left, :K, 0)
-  #     vm.run(:left, :S, 0)
-  #     vm.run(:right, :get, 0)
-  #     vm.run(:left, :K, 0)
-  #     vm.run(:left, :S, 0)
-  #     vm.run(:right, :succ, 0)
-  #     vm.run(:right, :zero, 0)
-  #     vm.run(:right, :zero, 0)
-  #     assert_equal 9833, vm.oslot(255).vitality
-  #   end
-  # end
+  def test_loop_dec2
+    apps = [
+            [:right, :get, 0],
+            [:left, :S, 0],
+            [:right, :dec, 1],
+            [:left, :S, 1],
+            [:right, :I, 1],
+            [:left, :K, 0],
+            [:left, :S, 0],
+            [:right, :get, 0],
+            [:left, :K, 0],
+            [:left, :S, 0],
+            [:right, :succ, 0],
+            [:right, :zero, 0],
+            [:right, :zero, 0]
+           ]
+  VM.simulate(PlayField.new) do |vm|
+      apps.each do |app|
+        vm.run(*app)
+        vm.play_field.swap_players
+        vm.zombies!(vm.play_field)
+
+        # 相手は何もしないことを想定。
+        vm.play_field.swap_players
+        vm.zombies!(vm.play_field)
+      end
+      assert_equal(9833, vm.oslot(255).vitality)
+    end
+  end
 
   def test_s_k_s_help_zero
     VM.simulate(PlayField.new) do |vm|
@@ -287,9 +326,7 @@ class VMTest < Test::Unit::TestCase
                             ]
       initial_and_expects.each do |initial, expect|
         vm.pslot(0).vitality = initial
-        vm.run(:right, :inc, 0)
-        vm.run(:right, :zero, 0)
-        assert_equal([:I], vm.pslot(0).field)
+        assert_equal([:I], vm.inc(0))
         assert_equal(expect, vm.pslot(0).vitality)
       end
     end
@@ -309,11 +346,9 @@ class VMTest < Test::Unit::TestCase
       initial_and_expects.each do |initial, expect|
         vm.pslot(0).vitality = initial
         vm.processing_zombies = true
-        vm.run(:right, :inc, 0)
-        vm.run(:right, :zero, 0)
-        vm.processing_zombies = false
-        assert_equal([:I], vm.pslot(0).field)
+        assert_equal([:I], vm.inc(0))
         assert_equal(expect, vm.pslot(0).vitality)
+        vm.processing_zombies = false
       end
     end
   end
@@ -349,9 +384,7 @@ class VMTest < Test::Unit::TestCase
                             ]
       initial_and_expects.each do |initial, expect|
         vm.oslot(255).vitality = initial
-        vm.run(:right, :dec, 0)
-        vm.run(:right, :zero, 0)
-        assert_equal([:I], vm.oslot(255).field)
+        assert_equal([:I], vm.dec(0))
         assert_equal(expect, vm.oslot(255).vitality)
       end
     end
@@ -372,11 +405,9 @@ class VMTest < Test::Unit::TestCase
       initial_and_expects.each do |initial, expect|
         vm.oslot(255).vitality = initial
         vm.processing_zombies = true
-        vm.run(:right, :dec, 0)
-        vm.run(:right, :zero, 0)
-        vm.processing_zombies = false
-        assert_equal([:I], vm.oslot(255).field)
+        assert_equal([:I], vm.dec(0))
         assert_equal(expect, vm.oslot(255).vitality)
+        vm.processing_zombies = false
       end
     end
   end

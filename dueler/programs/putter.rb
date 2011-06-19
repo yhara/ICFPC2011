@@ -13,7 +13,7 @@ module Putter
       @name
     end
 
-    def putter(slot, init=false)
+    def putter(slot)
       [
         [:left, :put, slot],
         [:right, slot, @name]
@@ -54,7 +54,7 @@ module Putter
     # スロット0をインデックス
     # スロット1をスタックの底 として使用
     # S[K[ S[K[ 左の子 ]] [get] ]] [get][zero]
-    def putter(slot, init=false)
+    def putter(slot)
       case 
       when Appli === @left && Appli === @right
         @@stack += 1
@@ -80,15 +80,27 @@ module Putter
         ops << [:left, @left.name, slot]
         ops
       else
-        [
-          [:right, slot, @right.name],
-          [:left, @left.name, slot]
-        ].tap{|ary|
-          if init
-            # putでIに初期化する
-            ary.unshift [:left, :put, slot]
-          end
-        }
+        case
+        when @right.name == :_now_
+          # 既存のデータを関数でラップできるようにするための処理
+          # 例 set 2, K[_now_]
+          #  => [:left, :K, 2]
+          [
+            [:left, @left.name, slot]
+          ]
+        when @left.name == :_now_
+          # 例 set 2, K[_now_[succ]]
+          #  => [:right, 2, :succ]
+          [
+            [:right, slot, @right.name]
+          ]
+        else
+          ary = [
+            [:left, :put, slot],
+            [:right, slot, @right.name],
+            [:left, @left.name, slot]
+          ]
+        end
       end
     end
   end
@@ -97,14 +109,14 @@ module Putter
     const_set(name, FuncName.new(name))
   end
   [:zero, :succ, :dbl, :get, :put, :inc, :dec, :attack,
-    :help, :copy, :revive, :zombie].each do |name|
+    :help, :copy, :revive, :zombie, :_now_].each do |name|
     define_method(name){
       return FuncName.new(name)
     }
   end
 
-  def set(slot, tree, opts={})
-    tree.putter(slot, opts[:init]).each do |a, b, c|
+  def set(slot, tree)
+    tree.putter(slot).each do |a, b, c|
       command ((a==:left) ? "1" : "2"), b, c
     end
   end

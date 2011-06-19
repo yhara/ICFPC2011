@@ -232,6 +232,29 @@ class VMTest < Test::Unit::TestCase
     end
   end
 
+  def test_s_inc__processing_zombies
+    VM.simulate(PlayField.new) do |vm|
+      assert_equal([:I], vm.pslot(0).field)
+      assert_equal(10000, vm.pslot(0).vitality)
+      initial_and_expects = [
+                             [-1, -1],
+                             [0, 0],
+                             [1, 0],
+                             [10000, 9999],
+                             [65535, 65534]
+                            ]
+      initial_and_expects.each do |initial, expect|
+        vm.pslot(0).vitality = initial
+        vm.processing_zombies = true
+        vm.run(:right, :inc, 0)
+        vm.run(:right, :zero, 0)
+        vm.processing_zombies = false
+        assert_equal([:I], vm.pslot(0).field)
+        assert_equal(expect, vm.pslot(0).vitality)
+      end
+    end
+  end
+
   def test_s_inc__not_fixnum
     VM.simulate(PlayField.new) do |vm|
       assert_raise(NativeError) do
@@ -265,6 +288,30 @@ class VMTest < Test::Unit::TestCase
         vm.oslot(255).vitality = initial
         vm.run(:right, :dec, 0)
         vm.run(:right, :zero, 0)
+        assert_equal([:I], vm.oslot(255).field)
+        assert_equal(expect, vm.oslot(255).vitality)
+      end
+    end
+  end
+
+  def test_s_dec__processing_zombies
+    VM.simulate(PlayField.new) do |vm|
+      assert_equal([:I], vm.oslot(255).field)
+      assert_equal(10000, vm.oslot(255).vitality)
+      initial_and_expects = [
+                             [-1, -1],
+                             [0, 0],
+                             [1, 2],
+                             [10000, 10001],
+                             [65534, 65535],
+                             [65535, 65535]
+                            ]
+      initial_and_expects.each do |initial, expect|
+        vm.oslot(255).vitality = initial
+        vm.processing_zombies = true
+        vm.run(:right, :dec, 0)
+        vm.run(:right, :zero, 0)
+        vm.processing_zombies = false
         assert_equal([:I], vm.oslot(255).field)
         assert_equal(expect, vm.oslot(255).vitality)
       end

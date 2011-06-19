@@ -230,9 +230,18 @@ class VM
   end
 
   def self.attack3(i, j, n)
+    raise NativeError, "#{n} is not fixnum." unless n.is_a?(Fixnum)
+    raise NativeError, "#{n} is greater than pslot(#{i}).vitality:#{pslot(i).vitality}." if n > pslot(i).vitality
     pslot(i).vitality -= n
-    oslot(255-j).vitality -= n * 9 / 10
-    return :I
+    if oslot(255 - j).vitality > 0
+      damage = n * 9 / 10
+      if damage > oslot(255 - j).vitality
+        oslot(255 - j).vitality = 0
+      else
+        oslot(255 - j).vitality -= damage
+      end
+    end
+    return [:I]
   end
 
   # Card "help" is a function that takes an argument i and returns

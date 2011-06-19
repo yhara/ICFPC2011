@@ -13,7 +13,7 @@ module Putter
       @name
     end
 
-    def putter(slot)
+    def putter(slot, init=false)
       [
         [:left, :put, slot],
         [:right, slot, @name]
@@ -54,7 +54,7 @@ module Putter
     # スロット0をインデックス
     # スロット1をスタックの底 として使用
     # S[K[ S[K[ 左の子 ]] [get] ]] [get][zero]
-    def putter(slot)
+    def putter(slot, init=false)
       case 
       when Appli === @left && Appli === @right
         @@stack += 1
@@ -81,10 +81,14 @@ module Putter
         ops
       else
         [
-          [:left, :put, slot],
           [:right, slot, @right.name],
           [:left, @left.name, slot]
-        ]
+        ].tap{|ary|
+          if init
+            # putでIに初期化する
+            ary.unshift [:left, :put, slot]
+          end
+        }
       end
     end
   end
@@ -99,8 +103,8 @@ module Putter
     }
   end
 
-  def set(slot, tree)
-    tree.putter(slot).each do |a, b, c|
+  def set(slot, tree, opts={})
+    tree.putter(slot, opts[:init]).each do |a, b, c|
       command ((a==:left) ? "1" : "2"), b, c
     end
   end

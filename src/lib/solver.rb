@@ -30,7 +30,8 @@ class Solver
       return ReviveZero
     end
 
-    my_dead_slot = World.instance.play_field.myself.slots.detect { |slot|
+    my_dead_slot =
+      World.instance.play_field.myself.slots.to_a[0 ... World::NUM_SLOTS / 2].detect { |slot|
       slot.vitality <= 0
     }
     if my_dead_slot

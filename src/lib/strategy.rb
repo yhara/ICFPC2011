@@ -12,6 +12,7 @@ class Strategy
   end
 
   def o(arg1, arg2)
+    @left_operations ||= []
     if arg1.class == String || arg1.class == Symbol
       apply = :left
       card = arg1
@@ -141,6 +142,42 @@ class AttackTiredEnemy < Strategy
   end
 end
 
+# ゾンビを送り込む
+class ZombiePowder < Strategy
+  def initialize
+    pf = World.instance.play_field
+    sirial_help_for_zombie(1, 0, 1, 1)
+    zombie_powder(5, 1)
+  end
+
+  def sirial_help_for_zombie(s, i, j, v)
+    o("put", s)
+    o(s, "help")                         # 1: help
+    bind(s, i)                           # 1: help(i)
+    bind(s, j)                           # 1: help(i)(j)
+    o "K", s                             # 1: K(help(i)(j))
+    o "S", s                             # 1: S(K(help(i)(j)))
+    bind(s, v, apply_to_zero: ["K"])     # 1: S(K(help(i)(j)))(K(v))
+  end
+
+  # 送り込むzomibeを準備
+  # 2: S(K(S(zombie(target_slot))(get)))(succ)(zero)
+  def zombie_powder(use_slot, target_slot)
+    o "put", use_slot
+    o use_slot, "zombie"        # s: zombie
+    bind(use_slot, target_slot) # s: zombie(target_slot)
+    o "K", use_slot             # s: S(zombie(target_slot))
+    o "S", use_slot             # s: S(K(zombie(target_slot))))
+    o use_slot, "get"           # s: S(K(zombie(target_slot)))(get)
+    o "K", use_slot             # s: K(S(K(zombie(target_slot)))(get))
+    o "S", use_slot             # s: S(K(S(K(zombie(target_slot)))(get)))
+    o use_slot, "succ"          # s: S(K(S(K(zombie(target_slot)))(get)))(succ)
+
+    # zobie powder!!!!!!!!!!!!!!!!!!!!
+    o 2, "zero"                 # s: S(K(S(zombie(target_slot))(get)))(succ)(zero)
+  end
+end
+
 class Strategy
-  ALL = [AttackTiredEnemy]
+  ALL = [AttackTiredEnemy, ZombiePowder]
 end

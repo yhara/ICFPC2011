@@ -17,6 +17,9 @@ end
 read if ARGV[0] == "1"
 
 def command(a, b, c)
+  if $TRACE
+    $stderr.puts "【俺のターン】#{b}(#{c})"
+  end
   puts a
   puts b
   puts c

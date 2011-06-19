@@ -46,6 +46,14 @@ class VMTest < Test::Unit::TestCase
       assert_equal([:attack], vm.pslot(0).field)
       vm.run(:left, :get, 0) # => get(attack) -> エラーが発生する。
       assert_equal([:I], vm.pslot(0).field)
+
+      vm.pslot(0).field = 10
+      vm.run(:right, :I, 0)
+      assert_equal([:I], vm.pslot(0).field)
+
+      vm.pslot(0).field = 10
+      vm.run(:left, :zero, 0)
+      assert_equal([:I], vm.pslot(0).field)
     end
   end
 
@@ -77,29 +85,6 @@ class VMTest < Test::Unit::TestCase
       assert_equal [:I], vm.evaluate(func, 0)
     end
   end
-
-# TODO_KOUJI: 修正する。
-=begin
-  def test_run_fail_with_apply_fixnum_to_card
-    VM.simulate(PlayField.new) do |vm|
-      vm.pslot(0).field = 10
-      assert_raise(NativeError) do
-        vm.run(:right, :I, 0)
-      end
-    end
-  end
-=end
-
-# TODO_KOUJI: 修正する。
-=begin
-  def test_run_fail_with_apply_zero_to_field
-    VM.simulate(PlayField.new) do |vm|
-      assert_raise(NativeError) do
-        vm.run(:left, :zero, 0)
-      end
-    end
-  end
-=end
 
   def test_s_succ
     VM.simulate(PlayField.new) do |vm|

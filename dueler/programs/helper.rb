@@ -36,9 +36,12 @@ end
 
 # 指定するスロットのcardの引数に指定した数値をbindする
 # TODO: スロットが死んだらreviveしなければならない
-def bind(slot, num)
+def bind(slot, num, apply_to_zero=[])
   o "put", 0
   make_about_num(0, num)
+  apply_to_zero.each do |card|
+    o card, 0
+  end
   o "K", slot      # s: K(card)
   o "S", slot      # s: S(K(card))
   o slot, "get"    # s: S(K(card))(get)

@@ -53,7 +53,9 @@ class World
 
   private
   def get_enemy_answer
-    lr = $stdin.gets.chomp
+    lr = $stdin.gets
+    exit(0) if lr.nil?
+    lr = lr.chomp
     if lr == "1"
       lr = :left
       card = $stdin.gets.chomp

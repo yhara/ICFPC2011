@@ -2,7 +2,7 @@
 
 === Requirements
 
-* Ruby interpreter (ruby1.9.1).
+* Ruby interpreter (tested on ruby1.9.1 <1.9.2.0-2>).
 
 === Running
 

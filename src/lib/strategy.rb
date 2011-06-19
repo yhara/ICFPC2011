@@ -39,10 +39,18 @@ class AttackTiredEnemy < Strategy
     # TODO: min_enemy_slotを超える必要はない
     # TODO: 2のn乗にまるめるのが効率いい
     damage = max_my_slot.vitality - 1
+
+    # @conditionsには，一致する戦略かどうかを判定するための情報を含める．
+    # AttackTiredEnemyの場合は操作を生成するための
+    # メソッド引数全部を指定することによって，後で生成されたものが同じ
+    # 戦略かどうかを判定できるようにしてある．
     @conditions = [tmp_slot_index,
                    max_my_slot_index,
                    World::NUM_SLOTS - min_enemy_slot_index,
                    damage]
+
+    # @left_operationsには，実際にこの戦略で操作する内容を記述する．
+    # ex. [[:left, :attack, 10], [:right, :I, 10], ...]
     @left_operations = attack(*conditions)
   end
 

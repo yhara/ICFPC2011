@@ -2,7 +2,7 @@
 require_relative 'helper.rb'
 require_relative 'putter.rb'; include Putter
 
-$TRACE=1
+#$TRACE=1
 
 =begin
 ゾンビにcopyを使わせたい
@@ -109,23 +109,14 @@ end
 # 255スロットを確実にぶっ殺す
 attack(128, 0, 9000)
 attack(129, 0, 9000)
-$stderr.puts "@"*128
 
 # 最短のケース。52ターンで攻撃可能。
+help_for_zombie(1, 2, 3, 4, 5, 6)
+make_num 6, 10000
 target = 0
-#target.step(2550, 2) do |i|
-1.times{
-  help_for_zombie(1, 2, 3, 4, 5, 6)
+target.step(2550, 2) do |i|
 
-  make_num 4, 11
-  make_num 5, 12
-  make_num 6, 13
+  make_num 4, i
+  make_num 5, i+1
   zomie_powder(target: 255, func: 1, tmp: 2)
-
-  make_num 4, 21
-  make_num 5, 22
-  make_num 6, 33
-  zomie_powder(target: 255, func: 1, tmp: 2)
-}
-o "I", 255
-o "I", 255
+end

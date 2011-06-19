@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 require "world"
+require "strategy"
 # 問題解決用
 class Solver
   # 先読みの深さ
@@ -14,7 +15,7 @@ class Solver
     strategies = []
     if @current_strategy.n_left_operations > 0
       strategies << new_strategy
-      STRATEGIES.each do |strategy_class|
+      Strategy::ALL.each do |strategy_class|
         new_strategy = strategy_class.new
         if @current_strategy.class == strategy_class &&
             @current_strategy.conditions == new_strategy.conditions
@@ -24,7 +25,7 @@ class Solver
         strategies << new_strategy
       end
     else
-      strategies = STRATEGIES.collect(&:new)
+      strategies = Strategy::ALL.collect(&:new)
     end
 
     best_strategy = strategies.max { |strategy|
@@ -36,105 +37,6 @@ class Solver
   end
 
   private
-
-  class Strategy
-    attr_reader :conditions
-
-    def n_left_operations
-      raise "!"
-    end
-
-    def next_operation
-      raise "!"
-    end
-
-    def n_left_operations
-      return @left_operations.length
-    end
-
-    def next_operation
-      return @left_operations.shift
-    end
-  end
-
-  # なにもしない
-  class NilStrategy < Strategy
-    def initialize
-      @conditions = nil
-      @left_operations = []
-    end
-  end
-
-  # 一番体力が弱い相手へ攻撃
-  class AttackTiredEnemy < Strategy
-    def initialize
-      pf = World.instance.play_field
-
-      min_enemy_slot, min_enemy_slot_index =
-        pf.enemy.slots.each_with_index.max_by {
-        |slot, i|
-        [slot.vitality, -i]
-      }
-      max_my_slot, max_my_slot_index =
-        pf.myself.slots.each_with_index.max_by {
-        |slot, i|
-        [slot.vitality, +i]
-      }
-
-      tmp_slot_index =
-        (max_my_slot_index - 1 + World::NUM_SLOTS) % World::NUM_SLOTS
-      # TODO: min_enemy_slotを超える必要はない
-      # TODO: 2のn乗にまるめるのが効率いい
-      damage = max_my_slot.vitality - 1
-      @conditions = [tmp_slot_index,
-                     max_my_slot_index,
-                     World::NUM_SLOTS - min_enemy_slot_index,
-                     damage]
-      @left_operations = attack(*conditions)
-    end
-
-    # numをslotに設定する
-    def set_constant(num, slot)
-      result = []
-      result << [:left, :zero, slot]
-      bin = []
-      while num > 0
-        num, r = num.divmod(2)
-        bin << r
-      end
-      result << [:right, :zero, slot]
-      while i=bin.pop
-        result << [:left, :succ, slot] if i==1
-        result << [:left, :dbl,  slot] unless bin.empty?
-      end
-      return result
-    end
-
-    # slotプログラムを組むためのフィールドインデックス
-    # i犠牲になるインデックス
-    # World::NUM_SLOTS-j攻撃対象のインデックス
-    # n犠牲にする体力
-    def attack(slot, i, j, n)
-      result = []
-      result << [:right, :attack, slot]
-      result << [:left, :K, slot]
-      result << [:left, :S, slot]
-      result << [:right, :get, slot]
-      result.concat(set_constant(i, 0))
-      result << [:right, :zero, slot]
-      result << [:left, :K, slot]
-      result << [:left, :S, slot]
-      result << [:right, :get, slot]
-      result.concat(set_constant(j, 0))
-      result << [:right, :zero, slot]
-      result << [:left, :K, slot]
-      result << [:left, :S, slot]
-      result << [:right, :get, slot]
-      result.concat(set_constant(n, 0))
-      result << [:right, :zero, slot]
-      return result
-    end
-  end
 
   def dec_1000(tmp_slot_1, tmp_slot_2)
     return [[:right, :get, tmp_slot_1],
@@ -214,6 +116,4 @@ class Solver
       end
     end
   end
-
-  STRATEGIES = [AttackTiredEnemy]
 end

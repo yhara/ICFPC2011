@@ -76,11 +76,12 @@ class AttackTiredEnemy < Strategy
       |slot, i|
       [slot.vitality, -i]
     }
-    max_my_slot, max_my_slot_index =
-      pf.myself.slots.to_a[World::NUM_SLOTS / 2 ... pf.myself.slots.length].each_with_index.max_by {
-      |slot, i|
-      [slot.vitality, -i]
+    max_my_slot =
+      pf.myself.slots.to_a[World::NUM_SLOTS / 2 ... pf.myself.slots.length].max_by {
+      |slot|
+      [slot.vitality, -slot.slot_no]
     }
+    max_my_slot_index = max_my_slot.slot_no
     tmp_slot_index = 1
     # TODO: min_enemy_slotを超える必要はない
     # TODO: 2のn乗にまるめるのが効率いい
@@ -123,24 +124,11 @@ class AttackTiredEnemy < Strategy
   # World::NUM_SLOTS-j攻撃対象のインデックス
   # n犠牲にする体力
   def attack(slot, i, j, n)
-    result = []
-    result << [:right, :attack, slot]
-    result << [:left, :K, slot]
-    result << [:left, :S, slot]
-    result << [:right, :get, slot]
-    result.concat(set_constant(i, 0))
-    result << [:right, :zero, slot]
-    result << [:left, :K, slot]
-    result << [:left, :S, slot]
-    result << [:right, :get, slot]
-    result.concat(set_constant(j, 0))
-    result << [:right, :zero, slot]
-    result << [:left, :K, slot]
-    result << [:left, :S, slot]
-    result << [:right, :get, slot]
-    result.concat(set_constant(n, 0))
-    result << [:right, :zero, slot]
-    return result
+    o "put", slot
+    o slot, "attack" # 1: attack
+    bind(slot, i)    # 1: attack(i)
+    bind(slot, j)    # 1: attack(i)(j)
+    bind(slot, n)    # 1: attack(i)(j)(n)
   end
 end
 

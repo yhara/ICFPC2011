@@ -13,6 +13,7 @@ end
 # スロット番号を生成する場合、2**nの位置を指定するとターン数を減らせる
 def make_about_num(slot, num)
   o slot, "zero" # => 0
+  return if num == 0
   o "succ", slot # => 1
   dbl_cnt = Math::log2(num).to_i
   dbl_cnt.times do

@@ -2,23 +2,39 @@
 # -*- coding: utf-8 -*-
 require_relative "helper"
 
-# 指定するスロットには対象のcardを入れておかなければならない。
-# 引数に数値をbindする
-def send_zomie_help(i, j, target_slot)
-  o 1, "help"   # s: help
-  bind(1, i)
-  bind(1, j)
-  o "K", 1      # s: K(help(i)(j))
-  o "S", 1      # s: S(K(help(i)(j)))
-  bind(1, 15000)
+# 1: S(K(help(1)(2)))(K(16384))
+def help_for_zombie(i, j)
+  o 1, "help"           # 1: help
+  bind(1, i)            # 1: help(i)
+  bind(1, j)            # 1: help(i)(j)
+  o "K", 1              # 1: K(help(i)(j))
+  o "S", 1              # 1: S(K(help(i)(j)))
+  bind(1, 15000, ["K"]) # 1: S(K(help(1)(2)))(K(16384))
+end
 
-  # # 送り込むzomibeを準備
-  # make_about_num(0, zombie_slot)
-  # o 2, "help" # s: help
-  # o "K", 2      # s: K(help)
-  # o "S", 2      # s: S(K(help))
-  # o 2, "get"    # s: S(K(help))(get)
-  # o 2, "zero"   # s: S(K(help))(get)(zero) => help(i)
+# 1: S(K(attack(1)(2)))(K(16384))
+def attack_for_zombie(i, j)
+  o 1, "attack"         # 1: attack
+  bind(1, i)            # 1: attack(i)
+  bind(1, j)            # 1: attack(i)(j)
+  o "K", 1              # 1: K(attack(i)(j))
+  o "S", 1              # 1: S(K(attack(i)(j)))
+  bind(1, 15000, ["K"]) # 1: S(K(attack(1)(2)))(K(16384))
+end
+
+# 送り込むzomibeを準備
+# 2: S(K(S(zombie(target_slot))(get)))(succ)(zero)
+def zomie_powdar(target_slot)
+  o 2, "zombie"        # 2: zombie
+  bind(2, target_slot) # 2: zombie(target_slot)
+  o "S", 2             # 2: S(zombie(target_slot))
+  o 2, "get"           # 2: S(zombie(target_slot))(get)
+  o "K", 2             # 2: K(S(zombie(target_slot))(get))
+  o "S", 2             # 2: S(K(S(zombie(target_slot))(get)))
+  o 2, "succ"          # 2: S(K(S(zombie(target_slot))(get)))(succ)
+
+  # zobie powder!!!!!!!!!!!!!!!!!!!!
+  o 2, "zero"          # s: S(K(S(zombie(target_slot))(get)))(succ)(zero)
 end
 
 # [:I]を受け取ったときに強力なhelp or attackを呼び出したい
@@ -31,4 +47,6 @@ end
 # S(K(attack(by0)(by0)))(K(by0)) => 1において
 # S(K(S(zombie(i))(get)))(succ)(zero)   => 2において
 
-send_zomie_help(1, 2, 30)
+# 最短のケース。52ターンで攻撃可能。
+help_for_zombie(0, 1)
+zomie_powdar(0)

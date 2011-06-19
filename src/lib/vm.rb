@@ -87,7 +87,10 @@ class VM
   # integer: 0..65535
   def self.evaluate(value, arg=nil)
     value ||= []
-    play_field.apply_cnt+=1
+    play_field.apply_cnt += 1
+    if play_field.apply_cnt > 1000
+      raise ApplicationLimitNativeError, "apply_cnt exceeded 1000."
+    end
     optimize!(value)
     return nil if value.empty?
     return value[0] if value[0].is_a?(Fixnum)

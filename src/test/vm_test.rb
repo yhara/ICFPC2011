@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 require_relative "test_helper"
+require "world"
 require "vm"
 require "play_field"
 

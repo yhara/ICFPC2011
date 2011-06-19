@@ -250,6 +250,16 @@ class VMTest < Test::Unit::TestCase
     end
   end
 
+  def test_zombie
+    VM.simulate(PlayField.new) do |vm|
+      assert_raise(NativeError) { vm.zombie2([:I], [:I]) }
+      assert_raise(NativeError) { vm.zombie2(0, [:I]) }
+      assert_equal([:zombie2, [:I]], vm.zombie([:I]))
+      vm.oslot(255).vitality = 0
+      assert_equal([:I], vm.zombie2(0, [:I]))
+    end
+  end
+
   def test_s_inc
     VM.simulate(PlayField.new) do |vm|
       assert_equal([:I], vm.pslot(0).field)

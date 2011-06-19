@@ -326,8 +326,12 @@ class VM
   end
 
   def self.zombie2(i, x)
-    oslot(255 - i).field = x
-    oslot(255 - i).vitality = -1 if oslot(255 - i).vitality == 0
+    raise NativeError, "#{i} is not fixnum." unless i.is_a?(Fixnum)
+    raise NativeError, "oslot(#{255 - i}) is alive." if oslot(255 - i).alived?
+    if oslot(255 - i).dead?
+      oslot(255 - i).field = x
+      oslot(255 - i).vitality = -1
+    end
     return [:I]
   end
   

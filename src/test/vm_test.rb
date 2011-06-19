@@ -385,4 +385,71 @@ class VMTest < Test::Unit::TestCase
     assert_equal([:I], play_field.proponent.slots[0].field)
     assert_equal(10001, play_field.opponent.slots[255 - 0].vitality)
   end
+
+  def test_s_attack
+    VM.simulate(PlayField.new) do |vm|
+      assert_equal([:attack2, 0], vm.attack(0))
+      assert_equal([:attack3, 0, 0], vm.attack2(0, 0))
+      assert_equal([:I], vm.attack3(0, 0, 0))
+      base_damage = 10
+      p_initials = [10, 11, 65534, 65535]
+      p_initials.each do |initial|
+        vm.pslot(0).vitality = initial
+        vm.attack3(0, 0, base_damage)
+        assert_equal(initial - base_damage, vm.pslot(0).vitality)
+      end
+      o_initial_and_expects = [
+                               [1, 0],
+                               [9, 0],
+                               [10, 1],
+                               [10000, 9991],
+                               [65534, 65525],
+                               [65535, 65526]
+                              ]
+      o_initial_and_expects.each do |initial, expect|
+        vm.oslot(255).vitality = initial
+        vm.attack3(0, 0, base_damage)
+        assert_equal(expect, vm.oslot(255).vitality)
+      end
+    end
+  end
+
+  def test_s_attack__raise_error
+    VM.simulate(PlayField.new) do |vm|
+      assert_raise(NativeError) do
+        vm.attack3(0, 0, [:I])
+      end
+      initials = [1, 10000, 65534]
+      initials.each do |initial|
+        assert_raise(NativeError) do
+          vm.pslot(0).vitality = initial
+          vm.attack3(0, 0, initial + 1)
+        end
+      end
+    end
+  end
+
+  def test_s_attack__processing_zombies
+    VM.simulate(PlayField.new) do |vm|
+      base_value = 10
+      o_initial_and_expects = [
+                               [-1, -1],
+                               [0, 0],
+                               [1, 10],
+                               [10000, 10009],
+                               [65525, 65534],
+                               [65526, 65535],
+                               [65527, 65535],
+                               [65534, 65535],
+                               [65535, 65535],
+                              ]
+      o_initial_and_expects.each do |initial, expect|
+        vm.oslot(255).vitality = initial
+        vm.processing_zombies = true
+        vm.attack3(0, 0, base_value)
+        vm.processing_zombies = false
+        assert_equal(expect, vm.oslot(255).vitality)
+      end
+    end
+  end
 end

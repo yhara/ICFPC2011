@@ -253,7 +253,3 @@ class ZombiePowder < Strategy
     o use_slot, "zero"
   end
 end
-
-class Strategy
-  ALL = [AttackTiredEnemy, ZombiePowder]
-end

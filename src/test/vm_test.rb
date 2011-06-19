@@ -38,6 +38,16 @@ class VMTest < Test::Unit::TestCase
       assert_equal 16, vm.pslot(1).field
     end
   end
+  
+  # エラーが発生すると操作対象のスロットは[:I]になる。
+  def test_s_run__error_1
+    VM.simulate(PlayField.new) do |vm|
+      vm.run(:right, :attack, 0)
+      assert_equal([:attack], vm.pslot(0).field)
+      vm.run(:left, :get, 0) # => get(attack) -> エラーが発生する。
+      assert_equal([:I], vm.pslot(0).field)
+    end
+  end
 
   # 現状は無限ループになるためコメントアウト。
   # apply_cntのチェックが入れば問題なくなる。
@@ -68,6 +78,8 @@ class VMTest < Test::Unit::TestCase
     end
   end
 
+# TODO_KOUJI: 修正する。
+=begin
   def test_run_fail_with_apply_fixnum_to_card
     VM.simulate(PlayField.new) do |vm|
       vm.pslot(0).field = 10
@@ -76,7 +88,10 @@ class VMTest < Test::Unit::TestCase
       end
     end
   end
+=end
 
+# TODO_KOUJI: 修正する。
+=begin
   def test_run_fail_with_apply_zero_to_field
     VM.simulate(PlayField.new) do |vm|
       assert_raise(NativeError) do
@@ -84,6 +99,7 @@ class VMTest < Test::Unit::TestCase
       end
     end
   end
+=end
 
   def test_s_succ
     VM.simulate(PlayField.new) do |vm|

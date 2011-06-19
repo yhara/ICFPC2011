@@ -26,17 +26,23 @@ class VM
   def self.run(lr, card, slot_no, opts={})
     card = card.to_sym
     card = card == :zero ? 0 : [card]
-    case lr
-    when :left
-      raise NativeError, "card is :zero." if card == 0
-      raise LogicError, "card #{card} is invalid value." if card.is_a?(Fixnum)
-      pslot(slot_no).field = evaluate(card, pslot(slot_no).field)
-    when :right
-      f = pslot(slot_no).field
-      raise NativeError, "#{f} is fixnum." if f.is_a?(Fixnum)
-      pslot(slot_no).field = evaluate(pslot(slot_no).field, card)
-    else
-      raise "lr value #{lr} is invalid"
+    begin
+      slot = pslot(slot_no)
+      case lr
+      when :left
+        raise NativeError, "card is :zero." if card == 0
+        raise NativeError, "card #{card} is invalid value." if card.is_a?(Fixnum)
+        slot.field = evaluate(card, slot.field)
+      when :right
+        f = slot.field
+        raise NativeError, "#{f} is fixnum." if f.is_a?(Fixnum)
+        slot.field = evaluate(slot.field, card)
+      else
+        raise NativeError, "lr value #{lr} is invalid"
+      end
+    rescue NativeError => e
+      log("適用中にエラーが発生しました。fieldをIにリセットします。 例外=<#{e}> slot_no=<#{slot_no}> slot=<#{slot}>")
+      slot.field = [:I]
     end
     if opts[:dump]
       log("proponent: " + play_field.proponent.to_s)
@@ -136,7 +142,7 @@ class VM
   # alive. It raises an error if i is not a valid slot number or the
   # slot is dead.
   def self.get(i)
-    raise NativeError, "i is not integer. i=<#{i}>" if !i.is_a?(Fixnum)
+    raise NativeError, " get(#{i}): i is not integer. i=<#{i}>" if !i.is_a?(Fixnum)
     raise NativeError, "#{pslot(i)} is dead." if pslot(i).dead?
     return pslot(i).field
   end

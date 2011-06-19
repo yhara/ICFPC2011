@@ -162,6 +162,13 @@ class VMTest < Test::Unit::TestCase
     end
   end
 
+  def test_K
+    VM.simulate(PlayField.new) do |vm|
+      assert_equal [:K2, [:I]], vm.K([:I])
+      assert_equal [:I], vm.K2([:I], [:I])
+    end
+  end
+
   def test_copy
     VM.simulate(PlayField.new) do |vm|
       assert_equal [:I], vm.copy(0)

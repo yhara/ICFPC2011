@@ -95,7 +95,7 @@ class AttackTiredEnemy < Strategy
     # 戦略かどうかを判定できるようにしてある．
     @conditions = [tmp_slot_index,
                    max_my_slot_index,
-                   World::NUM_SLOTS - min_enemy_slot_index,
+                   World::NUM_SLOTS - 1 - min_enemy_slot_index,
                    damage]
 
     # @left_operationsには，実際にこの戦略で操作する内容を記述する．

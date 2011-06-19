@@ -77,11 +77,11 @@ class AttackTiredEnemy < Strategy
       [slot.vitality, -i]
     }
     max_my_slot, max_my_slot_index =
-      pf.myself.slots.to_a[1 ... pf.myself.slots.length].each_with_index.max_by {
+      pf.myself.slots.to_a[World::NUM_SLOTS / 2 ... pf.myself.slots.length].each_with_index.max_by {
       |slot, i|
       [slot.vitality, -i]
     }
-    tmp_slot_index = 0
+    tmp_slot_index = 1
     # TODO: min_enemy_slotを超える必要はない
     # TODO: 2のn乗にまるめるのが効率いい
     damage = max_my_slot.vitality - 1

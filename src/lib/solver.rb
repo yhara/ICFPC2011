@@ -12,6 +12,40 @@ class Solver
   end
 
   def solve
+    c, *args = *select_strategy_class
+    if @current_strategy.n_left_operations <= 0 ||
+        @current_strategy.class != c
+      @current_strategy = c.new(*args)
+    end
+    operation = @current_strategy.next_operation
+    return operation
+  end
+
+  private
+
+  def select_strategy_class
+    if World.instance.play_field.myself.slots[0].vitality <= 0
+      return ZeroRevive
+    end
+
+    my_dead_slot = World.instance.play_field.myself.slots.detect { |slot|
+      slot.vitality <= 0
+    }
+    if my_dead_slot
+      return Revive, my_dead_slot.slot_no
+    end
+
+    enemy_dead_slot = World.instance.play_field.myself.slots.detect { |slot|
+      slot.vitality <= 0
+    }
+    if !enemy_dead_slot
+      return AttackTiredEnemy
+    end
+
+    return ZombiePowder, enemy_dead_slot.slot_no
+  end
+
+  def _solve
     strategies = []
     if @current_strategy.n_left_operations > 0
       strategies << new_strategy
@@ -35,8 +69,6 @@ class Solver
     operation = best_strategy.next_operation
     return operation
   end
-
-  private
 
   def dec_1000(tmp_slot_1, tmp_slot_2)
     return [[:right, :get, tmp_slot_1],

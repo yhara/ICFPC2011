@@ -63,6 +63,17 @@ class NilStrategy < Strategy
   end
 end
 
+# 0スロットを生き返らせる
+class ReviveZero < Strategy
+  def initialize
+  end
+end
+
+class ReviveSlot < Strategy
+  def initialize
+  end
+end
+
 # 一番体力が弱い相手へ攻撃
 class AttackTiredEnemy < Strategy
   def initialize

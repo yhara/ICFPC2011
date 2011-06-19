@@ -5,6 +5,7 @@ require "strategy"
 class Solver
   def initialize
     @current_strategy = NilStrategy.new
+    @copy_zombie_phase = true
   end
 
   def solve
@@ -31,6 +32,9 @@ class Solver
       slot.vitality <= 0
     }
     if my_dead_slot
+      if (2..7).include?(my_dead_slot.slot_no)
+        @copy_zombie_phase = false
+      end
       return ReviveSlot, my_dead_slot.slot_no
     end
 
@@ -45,6 +49,10 @@ class Solver
       return AttackTiredEnemy
     end
 
-    return ZombiePowder, enemy_dead_slot.slot_no
+    if @copy_zombie_phase
+      return CopyZombie, enemy_dead_slot.slot_no
+    else
+      return ZombiePowder, enemy_dead_slot.slot_no
+    end
   end
 end

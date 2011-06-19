@@ -28,6 +28,8 @@ class VM
     card = card == :zero ? 0 : [card]
     case lr
     when :left
+      raise NativeError, "card is :zero." if card == 0
+      raise LogicError, "card #{card} is invalid value." if card.is_a?(Fixnum)
       pslot(slot_no).field = evaluate(card, pslot(slot_no).field)
     when :right
       f = pslot(slot_no).field

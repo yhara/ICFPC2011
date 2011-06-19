@@ -77,6 +77,14 @@ class VMTest < Test::Unit::TestCase
     end
   end
 
+  def test_run_fail_with_apply_zero_to_field
+    VM.simulate(PlayField.new) do |vm|
+      assert_raise(NativeError) do
+        vm.run(:left, :zero, 0)
+      end
+    end
+  end
+
   def test_s_succ
     VM.simulate(PlayField.new) do |vm|
       (0..65534).each do |i|

@@ -5,7 +5,7 @@ class Player
   def initialize(name=:mine)
     @name = name
     @slots = Slots.new(World::NUM_SLOTS)
-    World::NUM_SLOTS.times{|i| @slots[i] = Slot.new}
+    World::NUM_SLOTS.times{|i| @slots[i] = Slot.new(i)}
   end
 
   attr_reader :slots, :name
@@ -14,7 +14,7 @@ class Player
     str = [@name]
     @slots.each_with_index do |s, i|
       unless s.field == [:I]
-        str << "#{i}={#{s.vitality},#{s.field}}"
+        str << s.to_s
       end
     end
     return str.join("\n")

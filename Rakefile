@@ -18,7 +18,10 @@ task :submission do
                      File.join(tmp, "yarunee", file))
     end
 
-    Dir.chdir(tmp)
-    system("tar -czvf #{File.join(Dir.tmpdir, "icfpc-2011-#{Time.now.strftime("%Y%m%d%H%M")}")}.tar.gz yarunee/*")
+    tar_path = "#{File.join(Dir.tmpdir, "icfpc-2011-#{Time.now.strftime("%Y%m%d%H%M")}")}.tar.gz"
+    Dir.chdir(tmp){
+      system("tar -czvf #{tar_path} yarunee/*")
+    }
+    FileUtils.mv(tar_path, "./#{File.basename(tar_path)}")
   end
 end

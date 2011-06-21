@@ -3,6 +3,22 @@
 require_relative "helper"
 
 # ザラキ!! 1ターンで70スロットが死亡
+#   S(S(S(help)(I))(K(8192)))(S(S(K(copy))(K(1)))(succ))
+#     f <- g x : S(S(help)(0))(K(8192))(0)
+#       h <- f x : S(help)(0)(0)
+#         h <- f x : help(0)
+#         y <- g x : I(0)
+#         r <- h y : help(0)(0)
+#       y <- g x : K(8192)(0)
+#       h <- h y : help(0)(0)(8192) => 実行!!
+#     y <- g x : S(S(K(copy))(K(1)))(succ)(0)
+#       h <- f x : S(K(copy))(K(1))(0)
+#         h <- f x : K(copy)(0) -> copy
+#         y <- g x : K(1)(0) -> 1
+#         r <- h y : copy(1) -> 自分自身をコピー
+#       y <- g x : succ(0) -> 1
+#       r <- h y : (..copyされたもの.)(succされた数字)
+#           .... 続く
 def zaraki(n)
   # 2: S(S(help)(I))(K(8192))
   o "put", 2
@@ -39,7 +55,7 @@ def zaraki(n)
   o "get", 1
 
   # target set
-  # S(K(loop))(K(n))
+  # S(K(loop))(K(n)) => zombieで I が渡ってもnの値を返す
   o "K", 2    # 2: K(loop)
   o "S", 2    # 2: S(K(loop))
   bind(2, n, apply_to_zero: ["K"]) # 2: S(S(K(loop)))(K(n))

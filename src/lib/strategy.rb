@@ -26,7 +26,7 @@ class Strategy
       card = arg2
       slot = arg1
     end
-    return @left_operations << [apply, card.to_sym, slot]
+    return @left_operations << [apply, card.to_sym, slot.to_i]
   end
 
   def command(a, b, c)

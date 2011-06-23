@@ -90,19 +90,46 @@ class World
     return [lr, card.to_sym, slot]
   end
 
+  # cardの値が15種類に含まれることを確認する。問題がなければ
+  # cardの値を文字列にして返す。
+  def validate_card(card)
+    card = card.to_sym
+    case card
+    when :I, :zero, :succ, :dbl, :get, :put, :S, :K, :inc, :dec, :attack, :help, :copy, :revive, :zombie
+      return card.to_s
+    else
+      raise ArgumentError, "cardの値<#{card}>が不正です"
+    end
+  end
+  
+  # slotの値が0から255までの整数であることを確認する。問題がなければ
+  # slotの値を文字列にして返す。
+  def validate_slot(slot)
+    slot = slot.to_i
+    if !(0..255).include?(slot)
+      raise ArgumentError
+    end
+    return slot.to_s
+  end
+
   def answer_output(answer)
     out = []
-    if answer[0] == :left
-      out[0] = "1"
-      out[1] = answer[1].to_s
-      out[2] = answer[2].to_s
-    else
-      out[0] = "2"
-      out[1] = answer[2].to_s
-      out[2] = answer[1].to_s
+    begin
+      if answer[0] == :left
+        out[0] = "1"
+        out[1] = validate_card(answer[1])
+        out[2] = validate_slot(answer[2])
+      else
+        out[0] = "2"
+        out[1] = validate_slot(answer[2])
+        out[2] = validate_card(answer[1])
+      end
+    rescue ArgumentError => e
+      out = ["1", "I", "0"]
+      log("自手の適用に不正な値があります。何も変化がない適用を出力します。 メッセージ=<#{es}> 適用=<#{out.inspect}>")
     end
-    puts out[0].to_s
-    puts out[1].to_s
-    puts out[2].to_s
+    puts out[0]
+    puts out[1]
+    puts out[2]
   end
 end

@@ -242,7 +242,9 @@ class ZombiePowder < Strategy
     # 十回に一度はフィールドを持っているslotを狙う
     if (@@zombie_evac_count % 10) == 0
       s = pf.enemy.slots.map{|s| s if s.field != [:I]}.sample(1).first
-      dead_slot_no = s unless s.nil?
+      if s
+        dead_slot_no = s.slot_no
+      end
     end
     zombie_powder(z_index, dead_slot_no, h_index)
     @@zombie_evac_count += 1

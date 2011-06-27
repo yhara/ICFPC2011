@@ -458,6 +458,10 @@ class VMTest < Test::Unit::TestCase
     play_field.proponent.slots[2].vitality = -1
     play_field.proponent.slots[2].field = [:S3, [:K2, [:inc]], [:K2, 3]]
 
+    #4: 0
+    play_field.proponent.slots[4].vitality = -1
+    play_field.proponent.slots[4].field = 0
+
     # --- ゾンビ処理 ---
     VM.zombies!(play_field)
 
@@ -475,6 +479,10 @@ class VMTest < Test::Unit::TestCase
     assert_equal(0, play_field.proponent.slots[2].vitality)
     assert_equal([:I], play_field.proponent.slots[2].field)
     assert_equal(9999, play_field.proponent.slots[3].vitality)
+
+    #4: 0 エラーになった
+    assert_equal(0, play_field.proponent.slots[4].vitality)
+    assert_equal([:I], play_field.proponent.slots[4].field)
   end
 
   def test_s_attack

@@ -88,6 +88,7 @@ class VM
   # function is array: [:I], [:K, [:help, [:zero]]]
   # integer: 0..65535
   def self.evaluate(value, arg=nil)
+    raise NativeError, "#{value} is fixnum." if value.is_a?(Fixnum)
     value ||= []
     play_field.apply_cnt += 1
     if play_field.apply_cnt > 1000

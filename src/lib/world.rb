@@ -45,7 +45,7 @@ class World
           answer = @solver.solve
         rescue Exception => es
           answer = [:left, :I, 0]
-          log("Solver#solveの実行中に予期せぬ例外が発生しました。何も変化がない処理を出力させます。 例外クラス=<#{es}> メッセージ=<#{es}> 出力=<#{answer.inspect}>")
+          log("Solver#solveの実行中に予期せぬ例外が発生しました。何も変化がない処理を出力させます。 例外クラス=<#{es.class}> メッセージ=<#{es}> 出力=<#{answer.inspect}>")
           es.backtrace.each do |l|
             log("  #{l}")
           end

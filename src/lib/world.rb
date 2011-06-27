@@ -70,7 +70,7 @@ class World
     e.backtrace.each do |l|
       log("  #{l}")
     end
-    sleep
+    exit
   end
 
   private
